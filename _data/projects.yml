@@ -1,3 +1,15 @@
+- name: Moving Worlds - SAP Acceleration Collective
+  image: assets/images/facesup-visualizer.png
+  link: https://github.com/faces-up-ngo/csv-data-visualizer
+  description: Help FacesUP Uganda to visualize children progress
+- name: Scheduled Backup of Data
+  image: assets/images/github.png
+  link:
+  description: Backup JSON data to GitHub automatically
+- name: Open Service Broker Integration
+  image: assets/images/osb.png
+  link:
+  description: Integration of the Open Service Broker API with SAP Service Manager
 - name: CentiMate - SAP InnoWeeks 2024
   image: assets/images/sap.png
   link:
