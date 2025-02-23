@@ -1,0 +1,8 @@
+- name: Masters Diploma Thesis (English)
+  image: assets/images/ai-hub.png
+  link: assets/archives/masters-thesis.zip
+  description: Integrating business artificial intelligence
+- name: Bachelors Diploma Thesis (Bulgarian)
+  image: assets/images/move.png
+  link: assets/archives/bachelors-thesis
+  description: Provision of infrastructure for data transmission and processing as an internet service
