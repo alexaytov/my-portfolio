@@ -154,7 +154,7 @@ Here is a valid draw.io XML that correctly reproduces the chatbot architecture d
 
 Diagram:
 
-![diagram](assets/posts/drawio-ai-generated-tam/ai-generated-tam-drawio.svg)
+![diagram]({{ site.baseurl }}/assets/posts/drawio-ai-generated-tam/ai-generated-tam-drawio.svg)
 
 Below is the XML output for the above prompt:
 
