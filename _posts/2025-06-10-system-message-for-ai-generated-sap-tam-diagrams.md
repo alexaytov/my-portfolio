@@ -19,7 +19,7 @@ For best results use **Anthropic Claude 3.7 or later**
 ## Diagram Results
 
 - Is it perfect? **No.**
-- Can you edit the results in draw.io to make them for your taste? **Yes!**
+- Can you edit the results in draw.io? **Yes!**
 - Does it get you started when working on a complex diagram? **Yes!**
 - Does it use the SAP TAM Notation? **Yes!**
 
