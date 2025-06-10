@@ -26,7 +26,7 @@
                 <a class="navbar-item" href="{{site.url}}{{site.baseurl}}/#about">ABOUT</a>
                 <a class="navbar-item" href="{{site.url}}{{site.baseurl}}/#project">PROJECTS</a>
                 <a class="navbar-item" href="{{site.url}}{{site.baseurl}}/#university">UNIVERSITY</a>
-                <!-- <a class="navbar-item" href="{{site.url}}{{site.baseurl}}/blog">BLOG</a> -->
+                <a class="navbar-item {% if page.layout == 'posts' %}is-active{% endif %}" class="navbar-item" href="{{site.url}}{{site.baseurl}}/posts">POSTS</a>
             </div>
 
         </div>
