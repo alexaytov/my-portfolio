@@ -14,7 +14,7 @@ post-image: https://images.unsplash.com/vector-1739809075070-3a4d4874412c?q=80&w
 
 This post introduces a prebuilt system message for an AI agent designed to generate SAP TAM (Technical Architecture Modeling) diagrams in draw.io-compatible XML format. The AI ensures that the generated diagrams adhere to strict semantic rules and can be directly opened in draw.io for further editing or sharing.
 
-For best results use **Anthropic Claud's 3.7 or later**
+For best results use **Anthropic Claude 3.7 or later**
 
 ## Diagram Results
 
