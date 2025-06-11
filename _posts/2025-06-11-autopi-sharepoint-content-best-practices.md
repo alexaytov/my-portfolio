@@ -21,6 +21,8 @@ I recently built a SharePoint integration as an SAP Automation Pilot catalog wit
 
 Trust me, I learned the hard way. 🤦 Vague names lead to confusion, wasted time, and automations that only *you* can understand (and maybe not even you a few weeks later!). 😅 So, let's explore some best practices, using my SharePoint catalog as an example, to ensure your content is top-notch. 🏆
 
+[The developed SharePoint Catalog.]({{ site.baseurl }}/assets/posts/autopi-sharepoint/sharepoint.catalog.json)
+
 ### Why Naming Matters (More Than You Think!) 🧠
 
 Think of your Automation Pilot content as a well-organized toolbox. 🧰 If all your screwdrivers are labeled "Screwdriver," how do you quickly grab the right one? You don't! 🙅 You end up rummaging around, wasting time, and possibly using the wrong tool for the job. 😩
@@ -156,12 +158,10 @@ If your `CreateListItem` command (and other commands) *also* uses these exact in
 
 Here's a list of the commands *from your SharePoint catalog* (with descriptions!), to give you some inspiration: 🌟
 
-* **CreateAndStoreJWTTokenFromCertificate:** Generates a JWT (JSON Web Token) using a certificate and stores it in Automation Pilot for secure authentication with SharePoint. 🔑
-* **CreateJWTTokenFromCertificate:** Generates a JWT (JSON Web Token) using a certificate for secure authentication with SharePoint. 🔐
-* **GetListItems:** Retrieves the entity type name for a SharePoint list. 📃
 * **CreateListItem:** Creates a list item in a SharePoint list. 📝
 * **CreateClassicCalendarEvent:** Creates a classic calendar event in a SharePoint calendar. 🗓️
 * **CreateClassicCalendarSchedule:** Creates a classic calendar schedule in a SharePoint calendar, including attendees. 🧑‍🤝‍🧑
+* **GetListItems:** Lists the items available in a specific team list. 📃
 * **GetCalendarEntityType:** Retrieves the entity type name for a SharePoint calendar list. ℹ️
 * **GetContentTypeId:** Retrieves the Content Type ID of a specific Content Type from the Sharepoint List 🆔
 * **GetListContentTypes:** Retrieves all available content types of the Sharepoint List 📑
@@ -169,6 +169,8 @@ Here's a list of the commands *from your SharePoint catalog* (with descriptions!
 * **GetParticipantId:** Retrieves the ID of a SharePoint user (participant) by email address. 🧑
 * **GetToken:** Retrieves an OAuth token from Azure AD using client ID and secret. 🔑
 * **GetTokenFromJWT:** Retrieves an OAuth token from Azure AD using a JWT (JSON Web Token). 🗝️
+* **CreateAndStoreJWTTokenFromCertificate:** Generates a JWT (JSON Web Token) using a certificate and stores it in Automation Pilot for secure authentication with SharePoint. 🔑
+* **CreateJWTTokenFromCertificate:** Generates a JWT (JSON Web Token) using a certificate for secure authentication with SharePoint. 🔐
 
 ### Other Helpful Tips 👍
 

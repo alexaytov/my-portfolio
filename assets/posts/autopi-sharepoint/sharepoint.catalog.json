@@ -1,0 +1,3241 @@
+{
+    "id": "sharepoint-<<<TENANT_ID>>>",
+    "technicalName": "sharepoint",
+    "name": "sharepoint",
+    "description": "",
+    "owner": "<<<TENANT_ID>>>",
+    "inputs": [],
+    "commands": [
+        {
+            "configuration": {
+                "values": [],
+                "output": {},
+                "executors": [
+                    {
+                        "execute": "sharepoint-<<<TENANT_ID>>>:CreateJWTTokenFromCertificate:1",
+                        "input": {
+                            "privateKey": "$(.execution.input.privateKey)",
+                            "clientId": "$(.execution.input.clientId)",
+                            "certificatePem": "$(.execution.input.certificatePem)",
+                            "tenantId": "$(.execution.input.tenantId)"
+                        },
+                        "alias": "createJWTToken",
+                        "description": null,
+                        "progressMessage": null,
+                        "initialDelay": null,
+                        "pause": null,
+                        "when": null,
+                        "validate": null,
+                        "autoRetry": null,
+                        "repeat": null,
+                        "errorMessages": [],
+                        "dryRun": null
+                    },
+                    {
+                        "execute": "http-sapcp:HttpRequest:1",
+                        "input": {
+                            "headers": "{\"content-type\":\"application/json\"}",
+                            "password": "$(.execution.input.autopiPassword)",
+                            "method": "POST",
+                            "body": "{\n  \"name\": \"$(.execution.input.autopiInputName)\",\n  \"description\": \"JWT Token for Azure AD Authentication\",\n  \"catalog\": \"$(.execution.input.autopiCatalog)-$(.execution.metadata.tenantId)\",\n  \"version\": 1,\n  \"keys\": {\n    \"jwtToken\": {\n      \"type\": \"string\",\n      \"sensitive\": true\n    }\n  },\n  \"values\": {\n    \"jwtToken\": \"$(.createJWTToken.output.jwtToken)\"\n  },\n  \"tags\": {}\n}",
+                            "contentType": "application/json",
+                            "successResponseCodes": "[\"2xx\",\"409\"]",
+                            "user": "$(.execution.input.autopiUsername)",
+                            "url": "$(.execution.metadata.autoPiUrl)/api/v1/inputs",
+                            "timeout": "10"
+                        },
+                        "alias": "createInput",
+                        "description": null,
+                        "progressMessage": null,
+                        "initialDelay": null,
+                        "pause": null,
+                        "when": null,
+                        "validate": null,
+                        "autoRetry": null,
+                        "repeat": null,
+                        "errorMessages": [],
+                        "dryRun": null
+                    },
+                    {
+                        "execute": "http-sapcp:HttpRequest:1",
+                        "input": {
+                            "headers": "{\"content-type\":\"application/merge-patch+json\"}",
+                            "password": "$(.execution.input.autopiPassword)",
+                            "method": "PATCH",
+                            "body": "{\n  \"keys\": {\n    \"jwtToken\": {\n      \"type\": \"string\",\n      \"sensitive\": true\n    }\n  },\n  \"values\": {\n    \"jwtToken\": \"value\"\n  }\n}",
+                            "contentType": "application/merge-patch+json",
+                            "successResponseCodes": "[\"2xx\"]",
+                            "user": "$(.execution.input.autopiUsername)",
+                            "url": "$(.execution.metadata.autoPiUrl)/api/v1/inputs/$(.execution.input.autopiCatalog)-$(.execution.metadata.tenantId):$(.execution.input.autopiInputName):1",
+                            "timeout": "10"
+                        },
+                        "alias": "patchInput",
+                        "description": null,
+                        "progressMessage": null,
+                        "initialDelay": null,
+                        "pause": null,
+                        "when": null,
+                        "validate": null,
+                        "autoRetry": null,
+                        "repeat": null,
+                        "errorMessages": [],
+                        "dryRun": null
+                    }
+                ],
+                "listeners": []
+            },
+            "id": "sharepoint-<<<TENANT_ID>>>:CreateAndStoreJWTTokenFromCertificate:1",
+            "name": "CreateAndStoreJWTTokenFromCertificate",
+            "description": "Generates a JWT (JSON Web Token) using a certificate and stores it in Automation Pilot for secure authentication with SharePoint.",
+            "catalog": "sharepoint-<<<TENANT_ID>>>",
+            "version": 1,
+            "inputKeys": {
+                "privateKey": {
+                    "type": "string",
+                    "sensitive": true,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The private key used for signing the JWT, base64 encoded.  Keep this secure."
+                },
+                "autopiCatalog": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The Automation Pilot catalog where the JWT will be stored."
+                },
+                "certificatePem": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The certificate in PEM format, used to generate the JWT. Base64 encoded."
+                },
+                "clientId": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The Client ID (Application ID) of the Azure AD application."
+                },
+                "autopiUsername": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The username of the Automation Pilot service account."
+                },
+                "tenantId": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The Tenant ID of the Azure AD instance."
+                },
+                "autopiPassword": {
+                    "type": "string",
+                    "sensitive": true,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The password of the Automation Pilot service account.  Keep this secure."
+                },
+                "autopiInputName": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The name of the Automation Pilot input entity where the JWT will be stored."
+                }
+            },
+            "outputKeys": {},
+            "tags": {},
+            "issues": []
+        },
+        {
+            "configuration": {
+                "values": [],
+                "output": {
+                    "item": "$(.createItem.output.body)"
+                },
+                "executors": [
+                    {
+                        "execute": "sharepoint-<<<TENANT_ID>>>:GetTokenFromJWT:1",
+                        "input": {
+                            "clientId": "$(.execution.input.clientId)",
+                            "tenantId": "$(.execution.input.tenantId)",
+                            "jwtToken": "$(.execution.input.jwtToken)"
+                        },
+                        "alias": "getToken",
+                        "description": null,
+                        "progressMessage": null,
+                        "initialDelay": null,
+                        "pause": null,
+                        "when": null,
+                        "validate": null,
+                        "autoRetry": null,
+                        "repeat": null,
+                        "errorMessages": [],
+                        "dryRun": null
+                    },
+                    {
+                        "execute": "sharepoint-<<<TENANT_ID>>>:GetListItemEntityTypeFullName:1",
+                        "input": {
+                            "listTitle": "$(.execution.input.listTitle)",
+                            "baseUrl": "$(.execution.input.baseUrl)",
+                            "clientId": "$(.execution.input.clientId)",
+                            "tenantId": "$(.execution.input.tenantId)",
+                            "jwtToken": "$(.execution.input.jwtToken)",
+                            "team": "$(.execution.input.team)",
+                            "token": "$(.getToken.output.token)"
+                        },
+                        "alias": "getEventType",
+                        "description": null,
+                        "progressMessage": null,
+                        "initialDelay": null,
+                        "pause": null,
+                        "when": null,
+                        "validate": null,
+                        "autoRetry": null,
+                        "repeat": null,
+                        "errorMessages": [],
+                        "dryRun": null
+                    },
+                    {
+                        "execute": "sharepoint-<<<TENANT_ID>>>:GetContentTypeId:1",
+                        "input": {
+                            "listTitle": "$(.execution.input.listTitle)",
+                            "baseUrl": "$(.execution.input.baseUrl)",
+                            "clientId": "$(.execution.input.clientId)",
+                            "tenantId": "$(.execution.input.tenantId)",
+                            "name": "$(.execution.input.type)",
+                            "jwtToken": "$(.execution.input.jwtToken)",
+                            "team": "$(.execution.input.team)",
+                            "token": "$(.getToken.output.token)"
+                        },
+                        "alias": "getContentTypeId",
+                        "description": null,
+                        "progressMessage": null,
+                        "initialDelay": null,
+                        "pause": null,
+                        "when": null,
+                        "validate": null,
+                        "autoRetry": null,
+                        "repeat": null,
+                        "errorMessages": [],
+                        "dryRun": null
+                    },
+                    {
+                        "execute": "http-sapcp:HttpRequest:1",
+                        "input": {
+                            "headers": "{\"Accept\":\"application/json;odata=verbose\",\"Content-Type\":\"application/json;odata=verbose\"}",
+                            "method": "POST",
+                            "authorizationHeader": "Bearer $(.getToken.output.token)",
+                            "body": "$(if .getContentTypeId.executed then {\"ContentTypeId\": $.getContentTypeId.output.id} else {} end + {\"__metadata\": {\"type\": .getEventType.output.type}} + {\"Start\": \"\\($.execution.input.itemStart)\", \"End\": \"\\($.execution.input.itemEnd)\", \"Title\": \"\\($.execution.input.itemTitle)\"} + $.execution.input.additionalItemFields)",
+                            "url": "$(.execution.input.baseUrl)/teams/$(.execution.input.team)/_api/web/lists/getbytitle('$(.execution.input.listTitle)')/items"
+                        },
+                        "alias": "createItem",
+                        "description": null,
+                        "progressMessage": null,
+                        "initialDelay": null,
+                        "pause": null,
+                        "when": null,
+                        "validate": null,
+                        "autoRetry": null,
+                        "repeat": null,
+                        "errorMessages": [],
+                        "dryRun": null
+                    }
+                ],
+                "listeners": []
+            },
+            "id": "sharepoint-<<<TENANT_ID>>>:CreateCalendarListItem:1",
+            "name": "CreateCalendarListItem",
+            "description": "Creates a list item in a SharePoint list.",
+            "catalog": "sharepoint-<<<TENANT_ID>>>",
+            "version": 1,
+            "inputKeys": {
+                "listTitle": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The title of the SharePoint list."
+                },
+                "baseUrl": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The base URL of the SharePoint site (e.g., https://sap.sharepoint.com)."
+                },
+                "clientId": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The Client ID (Application ID) of the Azure AD application."
+                },
+                "itemTitle": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The title for the list item that will be created."
+                },
+                "tenantId": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The Tenant ID of the Azure AD instance."
+                },
+                "itemStart": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": false,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The start time of the event e.g. 6/11/2025 00:00 the format is month/date/year hh:mm"
+                },
+                "jwtToken": {
+                    "type": "string",
+                    "sensitive": true,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The JWT (JSON Web Token) used for authentication with SharePoint. Keep this secure."
+                },
+                "itemEnd": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": false,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The end time of the event e.g. 6/11/2025 00:00. The format is month/day/year hh:mm."
+                },
+                "team": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The SharePoint team site name."
+                },
+                "type": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": false,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The name of content type. Leave empty to use the default one."
+                },
+                "additionalItemFields": {
+                    "type": "object",
+                    "sensitive": false,
+                    "required": false,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": "{}",
+                    "defaultValueFromInput": null,
+                    "description": null
+                }
+            },
+            "outputKeys": {
+                "item": {
+                    "type": "object",
+                    "sensitive": false,
+                    "description": "The complete response body of the created list item."
+                }
+            },
+            "tags": {},
+            "issues": []
+        },
+        {
+            "configuration": {
+                "values": [],
+                "output": {
+                    "item": "$(.createItem.output.body)"
+                },
+                "executors": [
+                    {
+                        "execute": "sharepoint-<<<TENANT_ID>>>:GetTokenFromJWT:1",
+                        "input": {
+                            "clientId": "$(.execution.input.clientId)",
+                            "tenantId": "$(.execution.input.tenantId)",
+                            "jwtToken": "$(.execution.input.jwtToken)"
+                        },
+                        "alias": "getToken",
+                        "description": null,
+                        "progressMessage": null,
+                        "initialDelay": null,
+                        "pause": null,
+                        "when": null,
+                        "validate": null,
+                        "autoRetry": null,
+                        "repeat": null,
+                        "errorMessages": [],
+                        "dryRun": null
+                    },
+                    {
+                        "execute": "sharepoint-<<<TENANT_ID>>>:GetListItemEntityTypeFullName:1",
+                        "input": {
+                            "listTitle": "$(.execution.input.calendarTitle)",
+                            "baseUrl": "$(.execution.input.baseUrl)",
+                            "clientId": "$(.execution.input.clientId)",
+                            "tenantId": "$(.execution.input.tenantId)",
+                            "jwtToken": "$(.execution.input.jwtToken)",
+                            "team": "$(.execution.input.team)",
+                            "token": "$(.getToken.output.token)"
+                        },
+                        "alias": "getEventType",
+                        "description": null,
+                        "progressMessage": null,
+                        "initialDelay": null,
+                        "pause": null,
+                        "when": null,
+                        "validate": null,
+                        "autoRetry": null,
+                        "repeat": null,
+                        "errorMessages": [],
+                        "dryRun": null
+                    },
+                    {
+                        "execute": "sharepoint-<<<TENANT_ID>>>:GetContentTypeId:1",
+                        "input": {
+                            "listTitle": "$(.execution.input.calendarTitle)",
+                            "baseUrl": "$(.execution.input.baseUrl)",
+                            "clientId": "$(.execution.input.clientId)",
+                            "tenantId": "$(.execution.input.tenantId)",
+                            "name": "Event",
+                            "jwtToken": "$(.execution.input.jwtToken)",
+                            "team": "$(.execution.input.team)",
+                            "token": "$(.getToken.output.token)"
+                        },
+                        "alias": "getContentTypeId",
+                        "description": null,
+                        "progressMessage": null,
+                        "initialDelay": null,
+                        "pause": null,
+                        "when": null,
+                        "validate": null,
+                        "autoRetry": null,
+                        "repeat": null,
+                        "errorMessages": [],
+                        "dryRun": null
+                    },
+                    {
+                        "execute": "http-sapcp:HttpRequest:1",
+                        "input": {
+                            "headers": "{\"Accept\":\"application/json;odata=verbose\",\"Content-Type\":\"application/json;odata=verbose\"}",
+                            "method": "POST",
+                            "authorizationHeader": "Bearer $(.getToken.output.token)",
+                            "body": "{\n  \"__metadata\": {\n    \"type\": \"$(.getEventType.output.type)\"\n  },\n  \"ContentTypeId\": \"$(.getContentTypeId.output.id)\",\n  \"Title\": \"$(.execution.input.eventTitle)\",\n  \"EventDate\": \"$(.execution.input.eventStartTime)\",\n  \"EndDate\": \"$(.execution.input.eventEndTime)\",\n  \"Description\": \"$(.execution.input.eventDescription)\",\n  \"Category\": \"$(.execution.input.eventCategory)\",\n  \"fAllDayEvent\": $(.execution.input.eventAllDay),\n  \"fRecurrence\": false\n}",
+                            "url": "$(.execution.input.baseUrl)/teams/$(.execution.input.team)/_api/web/lists/getbytitle('$(.execution.input.calendarTitle)')/items"
+                        },
+                        "alias": "createItem",
+                        "description": null,
+                        "progressMessage": null,
+                        "initialDelay": null,
+                        "pause": null,
+                        "when": null,
+                        "validate": null,
+                        "autoRetry": null,
+                        "repeat": null,
+                        "errorMessages": [],
+                        "dryRun": null
+                    }
+                ],
+                "listeners": []
+            },
+            "id": "sharepoint-<<<TENANT_ID>>>:CreateClassicCalendarEvent:1",
+            "name": "CreateClassicCalendarEvent",
+            "description": "Creates a classic calendar event in a SharePoint calendar.",
+            "catalog": "sharepoint-<<<TENANT_ID>>>",
+            "version": 1,
+            "inputKeys": {
+                "eventAllDay": {
+                    "type": "boolean",
+                    "sensitive": false,
+                    "required": false,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "Indicates whether the event is an all-day event (true/false). Defaults to false."
+                },
+                "clientId": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The Client ID (Application ID) of the Azure AD application."
+                },
+                "eventCategory": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": false,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": [
+                        "Meeting",
+                        "Work Hours",
+                        "Business",
+                        "Holiday",
+                        "Get-together",
+                        "Gifts",
+                        "Birthday",
+                        "Anniversary"
+                    ],
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The category of the event (e.g., Meeting, Work Hours)."
+                },
+                "eventLocation": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": false,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The location of the event."
+                },
+                "team": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The SharePoint team site name."
+                },
+                "baseUrl": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The base URL of the SharePoint site (e.g., https://sap.sharepoint.com)."
+                },
+                "eventTitle": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The title of the event."
+                },
+                "tenantId": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The Tenant ID of the Azure AD instance."
+                },
+                "eventDescription": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": false,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "A description of the event."
+                },
+                "eventEndTime": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The event end date and time in ISO 8601 format (e.g., 2023-10-27T10:00:00Z)."
+                },
+                "calendarTitle": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The title of the SharePoint calendar."
+                },
+                "jwtToken": {
+                    "type": "string",
+                    "sensitive": true,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The JWT (JSON Web Token) used for authentication with SharePoint. Keep this secure."
+                },
+                "eventStartTime": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The event start date and time in ISO 8601 format (e.g., 2023-10-27T09:00:00Z)."
+                }
+            },
+            "outputKeys": {
+                "item": {
+                    "type": "object",
+                    "sensitive": false,
+                    "description": "The complete response body of the created event item."
+                }
+            },
+            "tags": {},
+            "issues": []
+        },
+        {
+            "configuration": {
+                "values": [],
+                "output": {
+                    "item": "$(.createItem.output.body)"
+                },
+                "executors": [
+                    {
+                        "execute": "sharepoint-<<<TENANT_ID>>>:GetTokenFromJWT:1",
+                        "input": {
+                            "clientId": "$(.execution.input.clientId)",
+                            "tenantId": "$(.execution.input.tenantId)",
+                            "jwtToken": "$(.execution.input.jwtToken)"
+                        },
+                        "alias": "getToken",
+                        "description": null,
+                        "progressMessage": null,
+                        "initialDelay": null,
+                        "pause": null,
+                        "when": null,
+                        "validate": null,
+                        "autoRetry": null,
+                        "repeat": null,
+                        "errorMessages": [],
+                        "dryRun": null
+                    },
+                    {
+                        "execute": "sharepoint-<<<TENANT_ID>>>:GetListItemEntityTypeFullName:1",
+                        "input": {
+                            "listTitle": "$(.execution.input.calendarTitle)",
+                            "baseUrl": "$(.execution.input.baseUrl)",
+                            "clientId": "$(.execution.input.clientId)",
+                            "tenantId": "$(.execution.input.tenantId)",
+                            "jwtToken": "$(.execution.input.jwtToken)",
+                            "team": "$(.execution.input.team)",
+                            "token": "$(.getToken.output.token)"
+                        },
+                        "alias": "getEventType",
+                        "description": null,
+                        "progressMessage": null,
+                        "initialDelay": null,
+                        "pause": null,
+                        "when": null,
+                        "validate": null,
+                        "autoRetry": null,
+                        "repeat": null,
+                        "errorMessages": [],
+                        "dryRun": null
+                    },
+                    {
+                        "execute": "sharepoint-<<<TENANT_ID>>>:GetContentTypeId:1",
+                        "input": {
+                            "listTitle": "$(.execution.input.calendarTitle)",
+                            "baseUrl": "$(.execution.input.baseUrl)",
+                            "clientId": "$(.execution.input.clientId)",
+                            "tenantId": "$(.execution.input.tenantId)",
+                            "name": "Schedule",
+                            "jwtToken": "$(.execution.input.jwtToken)",
+                            "team": "$(.execution.input.team)",
+                            "token": "$(.getToken.output.token)"
+                        },
+                        "alias": "getContentTypeId",
+                        "description": null,
+                        "progressMessage": null,
+                        "initialDelay": null,
+                        "pause": null,
+                        "when": null,
+                        "validate": null,
+                        "autoRetry": null,
+                        "repeat": null,
+                        "errorMessages": [],
+                        "dryRun": null
+                    },
+                    {
+                        "execute": "utils-sapcp:ForEach:2",
+                        "input": {
+                            "inputMapping": "{\"baseUrl\":\"$(.execution.input.baseUrl)\",\"clientId\":\"$(.execution.input.clientId)\",\"tenantId\":\"$(.execution.input.tenantId)\",\"jwtToken\":\"$(.execution.input.jwtToken)\",\"team\":\"$(.execution.input.team)\",\"email\":\"$(.getParticipantIds.current.item)\",\"token\":\"$(.getToken.output.token)\"}",
+                            "inputs": "$(.execution.input.eventAttendees)",
+                            "command": "sharepoint-<<<TENANT_ID>>>:GetParticipantId:1"
+                        },
+                        "alias": "getParticipantIds",
+                        "description": null,
+                        "progressMessage": null,
+                        "initialDelay": null,
+                        "pause": null,
+                        "when": null,
+                        "validate": null,
+                        "autoRetry": null,
+                        "repeat": null,
+                        "errorMessages": [],
+                        "dryRun": null
+                    },
+                    {
+                        "execute": "http-sapcp:HttpRequest:1",
+                        "input": {
+                            "headers": "{\"Accept\":\"application/json;odata=verbose\",\"Content-Type\":\"application/json;odata=verbose\"}",
+                            "method": "POST",
+                            "authorizationHeader": "Bearer $(.getToken.output.token)",
+                            "body": "{\n  \"__metadata\": {\n    \"type\": \"$(.getEventType.output.type)\"\n  },\n  \"ContentTypeId\": \"$(.getContentTypeId.output.id)\",\n  \"Title\": \"$(.execution.input.eventTitle)\",\n  \"EventDate\": \"$(.execution.input.eventStartTime)\",\n  \"EndDate\": \"$(.execution.input.eventEndTime)\",\n  \"Description\": \"$(.execution.input.eventDescription)\",\n  \"Category\": \"$(.execution.input.eventCategory)\",\n  \"fAllDayEvent\": $(.execution.input.eventAllDay),\n  \"fRecurrence\": false,\n  \"ParticipantsPickerId\": {\n    \"results\": $(.getParticipantIds.output.outputs | map(.id))\n  }\n}",
+                            "url": "$(.execution.input.baseUrl)/teams/$(.execution.input.team)/_api/web/lists/getbytitle('$(.execution.input.calendarTitle)')/items"
+                        },
+                        "alias": "createItem",
+                        "description": null,
+                        "progressMessage": null,
+                        "initialDelay": null,
+                        "pause": null,
+                        "when": null,
+                        "validate": null,
+                        "autoRetry": null,
+                        "repeat": null,
+                        "errorMessages": [],
+                        "dryRun": null
+                    }
+                ],
+                "listeners": []
+            },
+            "id": "sharepoint-<<<TENANT_ID>>>:CreateClassicCalendarSchedule:1",
+            "name": "CreateClassicCalendarSchedule",
+            "description": "Creates a classic calendar schedule in a SharePoint calendar, including attendees.",
+            "catalog": "sharepoint-<<<TENANT_ID>>>",
+            "version": 1,
+            "inputKeys": {
+                "eventAllDay": {
+                    "type": "boolean",
+                    "sensitive": false,
+                    "required": false,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "Indicates whether the event is an all-day event (true/false). Defaults to false."
+                },
+                "clientId": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The Client ID (Application ID) of the Azure AD application."
+                },
+                "eventCategory": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": false,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": [
+                        "Meeting",
+                        "Work Hours",
+                        "Business",
+                        "Holiday",
+                        "Get-together",
+                        "Gifts",
+                        "Birthday",
+                        "Anniversary"
+                    ],
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The category of the event (e.g., Meeting, Work Hours)."
+                },
+                "eventLocation": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": false,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The location of the event."
+                },
+                "eventAttendees": {
+                    "type": "array",
+                    "sensitive": false,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "An array of email addresses for the event attendees."
+                },
+                "team": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The SharePoint team site name."
+                },
+                "baseUrl": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The base URL of the SharePoint site (e.g., https://sap.sharepoint.com)."
+                },
+                "eventTitle": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The title of the event."
+                },
+                "tenantId": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The Tenant ID of the Azure AD instance."
+                },
+                "eventDescription": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": false,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "A description of the event."
+                },
+                "eventEndTime": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The event end date and time in ISO 8601 format (e.g., 2023-10-27T10:00:00Z)."
+                },
+                "calendarTitle": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The title of the SharePoint calendar."
+                },
+                "jwtToken": {
+                    "type": "string",
+                    "sensitive": true,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The JWT (JSON Web Token) used for authentication with SharePoint.  Keep this secure."
+                },
+                "eventStartTime": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The event start date and time in ISO 8601 format (e.g., 2023-10-27T09:00:00Z)."
+                }
+            },
+            "outputKeys": {
+                "item": {
+                    "type": "object",
+                    "sensitive": false,
+                    "description": "The complete response body of the created schedule item."
+                }
+            },
+            "tags": {},
+            "issues": []
+        },
+        {
+            "configuration": {
+                "values": [],
+                "output": {
+                    "jwtToken": "$(if .executeScript.output.exitCode == 0 then .executeScript.output.result[-1] else null end)"
+                },
+                "executors": [
+                    {
+                        "execute": "scripts-sapcp:ExecuteNodeJsScript:1",
+                        "input": {
+                            "environment": "{\"TENANT_ID\":\"$(.execution.input.tenantId)\",\"CLIENT_ID\":\"$(.execution.input.clientId)\",\"PRIVATE_KEY_BASE64\":\"$(.execution.input.privateKey)\",\"CERTIFICATE_BASE64\":\"$(.execution.input.certificatePem)\"}",
+                            "packages": "[\"jose\",\"crypto\"]",
+                            "script": "const { SignJWT } = require('jose');\nconst { createPrivateKey } = require('crypto');\nconst { createHash } = require('crypto');\nconst crypto = require('crypto');\n\nasync function createSharePointJWT() {\n  // ...omitted for brevity...\n}\n\ncreateSharePointJWT();\n"
+                        },
+                        "alias": "executeScript",
+                        "description": null,
+                        "progressMessage": null,
+                        "initialDelay": null,
+                        "pause": null,
+                        "when": null,
+                        "validate": null,
+                        "autoRetry": null,
+                        "repeat": null,
+                        "errorMessages": [],
+                        "dryRun": null
+                    }
+                ],
+                "listeners": []
+            },
+            "id": "sharepoint-<<<TENANT_ID>>>:CreateJWTTokenFromCertificate:1",
+            "name": "CreateJWTTokenFromCertificate",
+            "description": "Generates a JWT (JSON Web Token) using a certificate for secure authentication with SharePoint.",
+            "catalog": "sharepoint-<<<TENANT_ID>>>",
+            "version": 1,
+            "inputKeys": {
+                "privateKey": {
+                    "type": "string",
+                    "sensitive": true,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The private key used for signing the JWT, base64 encoded.  Keep this secure."
+                },
+                "clientId": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The Client ID (Application ID) of the Azure AD application."
+                },
+                "certificatePem": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The certificate in PEM format, used to generate the JWT, base64 encoded."
+                },
+                "tenantId": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The Tenant ID of the Azure AD instance."
+                }
+            },
+            "outputKeys": {
+                "jwtToken": {
+                    "type": "string",
+                    "sensitive": true,
+                    "description": "The generated JWT (JSON Web Token).  Keep this secure."
+                }
+            },
+            "tags": {},
+            "issues": []
+        },
+        {
+            "configuration": {
+                "values": [],
+                "output": {
+                    "item": "$(.createItem.output.body)"
+                },
+                "executors": [
+                    {
+                        "execute": "sharepoint-<<<TENANT_ID>>>:GetTokenFromJWT:1",
+                        "input": {
+                            "clientId": "$(.execution.input.clientId)",
+                            "tenantId": "$(.execution.input.tenantId)",
+                            "jwtToken": "$(.execution.input.jwtToken)"
+                        },
+                        "alias": "getToken",
+                        "description": null,
+                        "progressMessage": null,
+                        "initialDelay": null,
+                        "pause": null,
+                        "when": null,
+                        "validate": null,
+                        "autoRetry": null,
+                        "repeat": null,
+                        "errorMessages": [],
+                        "dryRun": null
+                    },
+                    {
+                        "execute": "sharepoint-<<<TENANT_ID>>>:GetListItemEntityTypeFullName:1",
+                        "input": {
+                            "listTitle": "$(.execution.input.listTitle)",
+                            "baseUrl": "$(.execution.input.baseUrl)",
+                            "clientId": "$(.execution.input.clientId)",
+                            "tenantId": "$(.execution.input.tenantId)",
+                            "jwtToken": "$(.execution.input.jwtToken)",
+                            "team": "$(.execution.input.team)",
+                            "token": "$(.getToken.output.token)"
+                        },
+                        "alias": "getEventType",
+                        "description": null,
+                        "progressMessage": null,
+                        "initialDelay": null,
+                        "pause": null,
+                        "when": null,
+                        "validate": null,
+                        "autoRetry": null,
+                        "repeat": null,
+                        "errorMessages": [],
+                        "dryRun": null
+                    },
+                    {
+                        "execute": "sharepoint-<<<TENANT_ID>>>:GetContentTypeId:1",
+                        "input": {
+                            "listTitle": "$(.execution.input.listTitle)",
+                            "baseUrl": "$(.execution.input.baseUrl)",
+                            "clientId": "$(.execution.input.clientId)",
+                            "tenantId": "$(.execution.input.tenantId)",
+                            "name": "$(.execution.input.type)",
+                            "jwtToken": "$(.execution.input.jwtToken)",
+                            "team": "$(.execution.input.team)",
+                            "token": "$(.getToken.output.token)"
+                        },
+                        "alias": "getContentTypeId",
+                        "description": null,
+                        "progressMessage": null,
+                        "initialDelay": null,
+                        "pause": null,
+                        "when": null,
+                        "validate": null,
+                        "autoRetry": null,
+                        "repeat": null,
+                        "errorMessages": [],
+                        "dryRun": null
+                    },
+                    {
+                        "execute": "http-sapcp:HttpRequest:1",
+                        "input": {
+                            "headers": "{\"Accept\":\"application/json;odata=verbose\",\"Content-Type\":\"application/json;odata=verbose\"}",
+                            "method": "POST",
+                            "authorizationHeader": "Bearer $(.getToken.output.token)",
+                            "body": "$(if .getContentTypeId.executed then {\"ContentTypeId\": $.getContentTypeId.output.id} else {} end + {\"__metadata\": {\"type\": .getEventType.output.type}} + $.execution.input.properties)",
+                            "url": "$(.execution.input.baseUrl)/teams/$(.execution.input.team)/_api/web/lists/getbytitle('$(.execution.input.listTitle)')/items"
+                        },
+                        "alias": "createItem",
+                        "description": null,
+                        "progressMessage": null,
+                        "initialDelay": null,
+                        "pause": null,
+                        "when": null,
+                        "validate": null,
+                        "autoRetry": null,
+                        "repeat": null,
+                        "errorMessages": [],
+                        "dryRun": null
+                    }
+                ],
+                "listeners": []
+            },
+            "id": "sharepoint-<<<TENANT_ID>>>:CreateListItem:1",
+            "name": "CreateListItem",
+            "description": "Creates a list item in a SharePoint list.",
+            "catalog": "sharepoint-<<<TENANT_ID>>>",
+            "version": 1,
+            "inputKeys": {
+                "listTitle": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The title of the SharePoint list."
+                },
+                "baseUrl": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The base URL of the SharePoint site (e.g., https://sap.sharepoint.com)."
+                },
+                "clientId": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The Client ID (Application ID) of the Azure AD application."
+                },
+                "tenantId": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The Tenant ID of the Azure AD instance."
+                },
+                "jwtToken": {
+                    "type": "string",
+                    "sensitive": true,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The JWT (JSON Web Token) used for authentication with SharePoint. Keep this secure."
+                },
+                "team": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The SharePoint team site name."
+                },
+                "type": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": false,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The name of content type. Leave empty to use the default one."
+                },
+                "properties": {
+                    "type": "object",
+                    "sensitive": false,
+                    "required": false,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": "{}",
+                    "defaultValueFromInput": null,
+                    "description": "JSON object containing the properties of the list item to create."
+                }
+            },
+            "outputKeys": {
+                "item": {
+                    "type": "object",
+                    "sensitive": false,
+                    "description": "The complete response body of the created list item."
+                }
+            },
+            "tags": {},
+            "issues": []
+        },
+        {
+            "configuration": {
+                "values": [],
+                "output": {
+                    "output": "$(.executeScript.output.result)"
+                },
+                "executors": [
+                    {
+                        "execute": "scripts-sapcp:ExecuteNodeJsScript:1",
+                        "input": {
+                            "environment": "{\"AUTOMATION_PILOT_PASSWORD\":\"$(.execution.input.autopiPassword)\",\"AUTOMATION_PILOT_USERNAME\":\"$(.execution.input.autopiUsername)\",\"AUTOMATION_PILOT_BASE_URL\":\"$(.execution.metadata.autoPiUrl)\",\"AUTOMATION_PILOT_CATALOG\":\"$(.execution.input.autopiCatalog)-$(.execution.metadata.tenantId)\",\"AUTOMATION_PILOT_INPUT_NAME\":\"$(.execution.input.autopiInputName)\"}",
+                            "packages": "[\"node-forge\",\"axios\"]",
+                            "script": "..."
+                        },
+                        "alias": "executeScript",
+                        "description": null,
+                        "progressMessage": null,
+                        "initialDelay": null,
+                        "pause": null,
+                        "when": null,
+                        "validate": null,
+                        "autoRetry": null,
+                        "repeat": null,
+                        "errorMessages": [],
+                        "dryRun": null
+                    }
+                ],
+                "listeners": []
+            },
+            "id": "sharepoint-<<<TENANT_ID>>>:CreateSelfSignedCertificate:1",
+            "name": "CreateSelfSignedCertificate",
+            "description": "Generates a self-signed certificate for SharePoint authentication and uploads it to Automation Pilot.",
+            "catalog": "sharepoint-<<<TENANT_ID>>>",
+            "version": 1,
+            "inputKeys": {
+                "autopiCatalog": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The Automation Pilot catalog where the certificate data will be stored."
+                },
+                "autopiUsername": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The username of the Automation Pilot service account."
+                },
+                "autopiPassword": {
+                    "type": "string",
+                    "sensitive": true,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The password of the Automation Pilot service account.  Keep this secure."
+                },
+                "autopiInputName": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The name of the Automation Pilot input entity where the certificate data will be stored."
+                }
+            },
+            "outputKeys": {
+                "output": {
+                    "type": "string",
+                    "sensitive": false,
+                    "description": "Output of the nodejs script."
+                }
+            },
+            "tags": {},
+            "issues": []
+        },
+        {
+            "configuration": {
+                "values": [],
+                "output": {
+                    "type": "$(.getType.output.body | toObject.value)"
+                },
+                "executors": [
+                    {
+                        "execute": "sharepoint-<<<TENANT_ID>>>:GetTokenFromJWT:1",
+                        "input": {
+                            "clientId": "$(.execution.input.clientId)",
+                            "tenantId": "$(.execution.input.tenantId)"
+                        },
+                        "alias": "getToken",
+                        "description": null,
+                        "progressMessage": null,
+                        "initialDelay": null,
+                        "pause": null,
+                        "when": {
+                            "semantic": "OR",
+                            "conditions": [
+                                {
+                                    "semantic": "OR",
+                                    "cases": [
+                                        {
+                                            "expression": "$(.execution.input.token | length)",
+                                            "operator": "EQUALS",
+                                            "semantic": "OR",
+                                            "values": [
+                                                "0"
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        "validate": null,
+                        "autoRetry": null,
+                        "repeat": null,
+                        "errorMessages": [],
+                        "dryRun": null
+                    },
+                    {
+                        "execute": "http-sapcp:HttpRequest:1",
+                        "input": {
+                            "headers": "{\"Accept\":\"application/json;odata=nometadata\"}",
+                            "method": "GET",
+                            "authorizationHeader": "Bearer $(.getToken.output.token // .execution.input.token)",
+                            "url": "https://sap.sharepoint.com/teams/$(.execution.input.team)/_api/web/lists/getbytitle('$(.execution.input.calendarTitle)')/ListItemEntityTypeFullName"
+                        },
+                        "alias": "getType",
+                        "description": null,
+                        "progressMessage": null,
+                        "initialDelay": null,
+                        "pause": null,
+                        "when": null,
+                        "validate": null,
+                        "autoRetry": null,
+                        "repeat": null,
+                        "errorMessages": [],
+                        "dryRun": null
+                    }
+                ],
+                "listeners": []
+            },
+            "id": "sharepoint-<<<TENANT_ID>>>:GetCalendarEntityType:1",
+            "name": "GetCalendarEntityType",
+            "description": "Retrieves the entity type name for a SharePoint calendar list.",
+            "catalog": "sharepoint-<<<TENANT_ID>>>",
+            "version": 1,
+            "inputKeys": {
+                "clientId": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": false,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The Client ID (Application ID) of the Azure AD application."
+                },
+                "tenantId": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": false,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The Tenant ID of the Azure AD instance."
+                },
+                "calendarTitle": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The title of the SharePoint calendar."
+                },
+                "team": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The SharePoint team site name."
+                },
+                "token": {
+                    "type": "string",
+                    "sensitive": true,
+                    "required": false,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The OAuth token to authenticate with SharePoint."
+                }
+            },
+            "outputKeys": {
+                "type": {
+                    "type": "string",
+                    "sensitive": false,
+                    "description": "The ListItemEntityTypeFullName of the calendar."
+                }
+            },
+            "tags": {},
+            "issues": []
+        },
+        {
+            "configuration": {
+                "values": [],
+                "output": {
+                    "id": "$(.getTypeId.output.body | toObject.value[0].StringId)"
+                },
+                "executors": [
+                    {
+                        "execute": "sharepoint-<<<TENANT_ID>>>:GetTokenFromJWT:1",
+                        "input": {
+                            "clientId": "$(.execution.input.clientId)",
+                            "tenantId": "$(.execution.input.tenantId)",
+                            "jwtToken": "$(.execution.input.jwtToken)"
+                        },
+                        "alias": "getToken",
+                        "description": null,
+                        "progressMessage": null,
+                        "initialDelay": null,
+                        "pause": null,
+                        "when": {
+                            "semantic": "OR",
+                            "conditions": [
+                                {
+                                    "semantic": "OR",
+                                    "cases": [
+                                        {
+                                            "expression": "$(.execution.input.token | length)",
+                                            "operator": "EQUALS",
+                                            "semantic": "OR",
+                                            "values": [
+                                                "0"
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        "validate": null,
+                        "autoRetry": null,
+                        "repeat": null,
+                        "errorMessages": [],
+                        "dryRun": null
+                    },
+                    {
+                        "execute": "http-sapcp:HttpRequest:1",
+                        "input": {
+                            "headers": "{\"Accept\":\"application/json;odata=nometadata\"}",
+                            "method": "GET",
+                            "authorizationHeader": "Bearer $(.getToken.output.token // .execution.input.token)",
+                            "url": "$(.execution.input.baseUrl)/teams/$(.execution.input.team)/_api/web/lists/getbytitle('$(.execution.input.listTitle)')/ContentTypes?$filter=$(\"Name eq '\\(.execution.input.name)'\" | toUrlEncoded)&$select=StringId&$top=1"
+                        },
+                        "alias": "getTypeId",
+                        "description": null,
+                        "progressMessage": null,
+                        "initialDelay": null,
+                        "pause": null,
+                        "when": null,
+                        "validate": null,
+                        "autoRetry": null,
+                        "repeat": null,
+                        "errorMessages": [],
+                        "dryRun": null
+                    }
+                ],
+                "listeners": []
+            },
+            "id": "sharepoint-<<<TENANT_ID>>>:GetContentTypeId:1",
+            "name": "GetContentTypeId",
+            "description": "Retrieves the Content Type ID of a specific Content Type from the Sharepoint List",
+            "catalog": "sharepoint-<<<TENANT_ID>>>",
+            "version": 1,
+            "inputKeys": {
+                "listTitle": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The title of the SharePoint list."
+                },
+                "baseUrl": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The base URL of the SharePoint site (e.g., https://sap.sharepoint.com)."
+                },
+                "clientId": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The Client ID (Application ID) of the Azure AD application."
+                },
+                "tenantId": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The Tenant ID of the Azure AD instance."
+                },
+                "name": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The Name of the Content Type."
+                },
+                "jwtToken": {
+                    "type": "string",
+                    "sensitive": true,
+                    "required": false,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The JWT (JSON Web Token) used for authentication with SharePoint. Keep this secure."
+                },
+                "team": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The SharePoint team site name."
+                },
+                "token": {
+                    "type": "string",
+                    "sensitive": true,
+                    "required": false,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The OAuth token to authenticate with SharePoint."
+                }
+            },
+            "outputKeys": {
+                "id": {
+                    "type": "string",
+                    "sensitive": false,
+                    "description": "The StringId of the Content Type."
+                }
+            },
+            "tags": {},
+            "issues": []
+        },
+        {
+            "configuration": {
+                "values": [],
+                "output": {
+                    "types": "$(.getTypes.output.body | toObject.value)"
+                },
+                "executors": [
+                    {
+                        "execute": "sharepoint-<<<TENANT_ID>>>:GetTokenFromJWT:1",
+                        "input": {
+                            "clientId": "$(.execution.input.clientId)",
+                            "tenantId": "$(.execution.input.tenantId)",
+                            "jwtToken": "$(.execution.input.jwtToken)"
+                        },
+                        "alias": "getToken",
+                        "description": null,
+                        "progressMessage": null,
+                        "initialDelay": null,
+                        "pause": null,
+                        "when": {
+                            "semantic": "OR",
+                            "conditions": [
+                                {
+                                    "semantic": "OR",
+                                    "cases": [
+                                        {
+                                            "expression": "$(.execution.input.token | length)",
+                                            "operator": "EQUALS",
+                                            "semantic": "OR",
+                                            "values": [
+                                                "0"
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        "validate": null,
+                        "autoRetry": null,
+                        "repeat": null,
+                        "errorMessages": [],
+                        "dryRun": null
+                    },
+                    {
+                        "execute": "http-sapcp:HttpRequest:1",
+                        "input": {
+                            "headers": "{\"Accept\":\"application/json;odata=nometadata\"}",
+                            "method": "GET",
+                            "authorizationHeader": "Bearer $(.getToken.output.token // .execution.input.token)",
+                            "url": "$(.execution.input.baseUrl)/teams/$(.execution.input.team)/_api/web/lists/getbytitle('$(.execution.input.listTitle)')/ContentTypes"
+                        },
+                        "alias": "getTypes",
+                        "description": null,
+                        "progressMessage": null,
+                        "initialDelay": null,
+                        "pause": null,
+                        "when": null,
+                        "validate": null,
+                        "autoRetry": null,
+                        "repeat": null,
+                        "errorMessages": [],
+                        "dryRun": null
+                    }
+                ],
+                "listeners": []
+            },
+            "id": "sharepoint-<<<TENANT_ID>>>:GetListContentTypes:1",
+            "name": "GetListContentTypes",
+            "description": "Retrieves all available content types of the Sharepoint List",
+            "catalog": "sharepoint-<<<TENANT_ID>>>",
+            "version": 1,
+            "inputKeys": {
+                "listTitle": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The title of the SharePoint list."
+                },
+                "baseUrl": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The base URL of the SharePoint site (e.g., https://sap.sharepoint.com)."
+                },
+                "clientId": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The Client ID (Application ID) of the Azure AD application."
+                },
+                "tenantId": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The Tenant ID of the Azure AD instance."
+                },
+                "jwtToken": {
+                    "type": "string",
+                    "sensitive": true,
+                    "required": false,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The JWT (JSON Web Token) used for authentication with SharePoint. Keep this secure."
+                },
+                "team": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The SharePoint team site name."
+                },
+                "token": {
+                    "type": "string",
+                    "sensitive": true,
+                    "required": false,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The OAuth token to authenticate with SharePoint."
+                }
+            },
+            "outputKeys": {
+                "types": {
+                    "type": "array",
+                    "sensitive": false,
+                    "description": "The array with the availables content types."
+                }
+            },
+            "tags": {},
+            "issues": []
+        },
+        {
+            "configuration": {
+                "values": [],
+                "output": {
+                    "type": "$(.getType.output.body | toObject.value)"
+                },
+                "executors": [
+                    {
+                        "execute": "sharepoint-<<<TENANT_ID>>>:GetTokenFromJWT:1",
+                        "input": {
+                            "clientId": "$(.execution.input.clientId)",
+                            "tenantId": "$(.execution.input.tenantId)",
+                            "jwtToken": "$(.execution.input.jwtToken)"
+                        },
+                        "alias": "getToken",
+                        "description": null,
+                        "progressMessage": null,
+                        "initialDelay": null,
+                        "pause": null,
+                        "when": {
+                            "semantic": "OR",
+                            "conditions": [
+                                {
+                                    "semantic": "OR",
+                                    "cases": [
+                                        {
+                                            "expression": "$(.execution.input.token | length)",
+                                            "operator": "EQUALS",
+                                            "semantic": "OR",
+                                            "values": [
+                                                "0"
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        "validate": null,
+                        "autoRetry": null,
+                        "repeat": null,
+                        "errorMessages": [],
+                        "dryRun": null
+                    },
+                    {
+                        "execute": "http-sapcp:HttpRequest:1",
+                        "input": {
+                            "headers": "{\"Accept\":\"application/json;odata=nometadata\"}",
+                            "method": "GET",
+                            "authorizationHeader": "Bearer $(.getToken.output.token // .execution.input.token)",
+                            "url": "$(.execution.input.baseUrl)/teams/$(.execution.input.team)/_api/web/lists/getbytitle('$(.execution.input.listTitle)')/ListItemEntityTypeFullName"
+                        },
+                        "alias": "getType",
+                        "description": null,
+                        "progressMessage": null,
+                        "initialDelay": null,
+                        "pause": null,
+                        "when": null,
+                        "validate": null,
+                        "autoRetry": null,
+                        "repeat": null,
+                        "errorMessages": [],
+                        "dryRun": null
+                    }
+                ],
+                "listeners": []
+            },
+            "id": "sharepoint-<<<TENANT_ID>>>:GetListItemEntityTypeFullName:1",
+            "name": "GetListItemEntityTypeFullName",
+            "description": "Retrieves the entity type name for a SharePoint list.",
+            "catalog": "sharepoint-<<<TENANT_ID>>>",
+            "version": 1,
+            "inputKeys": {
+                "listTitle": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The title of the SharePoint list."
+                },
+                "baseUrl": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The base URL of the SharePoint site (e.g., https://sap.sharepoint.com)."
+                },
+                "clientId": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The Client ID (Application ID) of the Azure AD application."
+                },
+                "tenantId": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The Tenant ID of the Azure AD instance."
+                },
+                "jwtToken": {
+                    "type": "string",
+                    "sensitive": true,
+                    "required": false,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The JWT (JSON Web Token) used for authentication with SharePoint. Keep this secure."
+                },
+                "team": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The SharePoint team site name."
+                },
+                "token": {
+                    "type": "string",
+                    "sensitive": true,
+                    "required": false,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The OAuth token to authenticate with SharePoint."
+                }
+            },
+            "outputKeys": {
+                "type": {
+                    "type": "string",
+                    "sensitive": false,
+                    "description": "The ListItemEntityTypeFullName of the list."
+                }
+            },
+            "tags": {},
+            "issues": []
+        },
+        {
+            "configuration": {
+                "values": [],
+                "output": {
+                    "items": "$(.listItems.output.body)"
+                },
+                "executors": [
+                    {
+                        "execute": "sharepoint-<<<TENANT_ID>>>:GetTokenFromJWT:1",
+                        "input": {
+                            "clientId": "$(.execution.input.clientId)",
+                            "tenantId": "$(.execution.input.tenantId)",
+                            "jwtToken": "$(.execution.input.jwtToken)"
+                        },
+                        "alias": "getToken",
+                        "description": null,
+                        "progressMessage": null,
+                        "initialDelay": null,
+                        "pause": null,
+                        "when": {
+                            "semantic": "OR",
+                            "conditions": [
+                                {
+                                    "semantic": "OR",
+                                    "cases": [
+                                        {
+                                            "expression": "$(.execution.input.token | length)",
+                                            "operator": "EQUALS",
+                                            "semantic": "OR",
+                                            "values": [
+                                                "0"
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        "validate": null,
+                        "autoRetry": null,
+                        "repeat": null,
+                        "errorMessages": [],
+                        "dryRun": null
+                    },
+                    {
+                        "execute": "http-sapcp:HttpRequest:1",
+                        "input": {
+                            "headers": "{\"Accept\":\"application/json;odata=nometadata\"}",
+                            "method": "GET",
+                            "authorizationHeader": "Bearer $(.getToken.output.token // .execution.input.token)",
+                            "url": "$(.execution.input.baseUrl)/teams/$(.execution.input.team)/_api/web/lists/getbytitle('$(.execution.input.listTitle)')/items?$top=$(.execution.input.top)$(if .execution.input.select then \"&$select=\\($.execution.input.select)\" else \"\" end)$(if .execution.input.filter then \"&$filter=\\($.execution.input.filter | toUrlEncoded)\" else \"\" end)"
+                        },
+                        "alias": "listItems",
+                        "description": null,
+                        "progressMessage": null,
+                        "initialDelay": null,
+                        "pause": null,
+                        "when": null,
+                        "validate": null,
+                        "autoRetry": null,
+                        "repeat": null,
+                        "errorMessages": [],
+                        "dryRun": null
+                    }
+                ],
+                "listeners": []
+            },
+            "id": "sharepoint-<<<TENANT_ID>>>:GetListItems:1",
+            "name": "GetListItems",
+            "description": "Lists the items available in a specific team list.",
+            "catalog": "sharepoint-<<<TENANT_ID>>>",
+            "version": 1,
+            "inputKeys": {
+                "listTitle": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The title of the SharePoint list."
+                },
+                "filter": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": false,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "You can filter the results returned by the server e.g. Status eq 'Active'"
+                },
+                "baseUrl": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The base URL of the SharePoint site (e.g., https://sap.sharepoint.com)."
+                },
+                "clientId": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The Client ID (Application ID) of the Azure AD application."
+                },
+                "select": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": false,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "You select only certain fields or leave this blank to get all the fields e.g. Title,ID,Modified"
+                },
+                "top": {
+                    "type": "number",
+                    "sensitive": false,
+                    "required": false,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": 1,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": "100",
+                    "defaultValueFromInput": null,
+                    "description": "The number of items that will be returned"
+                },
+                "tenantId": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The Tenant ID of the Azure AD instance."
+                },
+                "jwtToken": {
+                    "type": "string",
+                    "sensitive": true,
+                    "required": false,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The JWT (JSON Web Token) used for authentication with SharePoint. Keep this secure."
+                },
+                "team": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The SharePoint team site name."
+                },
+                "token": {
+                    "type": "string",
+                    "sensitive": true,
+                    "required": false,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The OAuth token to authenticate with SharePoint."
+                }
+            },
+            "outputKeys": {
+                "items": {
+                    "type": "object",
+                    "sensitive": false,
+                    "description": "The list items returned from the API"
+                }
+            },
+            "tags": {
+                "feature:logs": "",
+                "feature:priority": "medium"
+            },
+            "issues": []
+        },
+        {
+            "configuration": {
+                "values": [],
+                "output": {
+                    "id": "$(.getId.output.body | toObject.Id)"
+                },
+                "executors": [
+                    {
+                        "execute": "sharepoint-<<<TENANT_ID>>>:GetTokenFromJWT:1",
+                        "input": {
+                            "clientId": "$(.execution.input.clientId)",
+                            "tenantId": "$(.execution.input.tenantId)",
+                            "jwtToken": "$(.execution.input.jwtToken)"
+                        },
+                        "alias": "getToken",
+                        "description": null,
+                        "progressMessage": null,
+                        "initialDelay": null,
+                        "pause": null,
+                        "when": {
+                            "semantic": "OR",
+                            "conditions": [
+                                {
+                                    "semantic": "OR",
+                                    "cases": [
+                                        {
+                                            "expression": "$(.execution.input.token | length)",
+                                            "operator": "EQUALS",
+                                            "semantic": "OR",
+                                            "values": [
+                                                "0"
+                                            ]
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        "validate": null,
+                        "autoRetry": null,
+                        "repeat": null,
+                        "errorMessages": [],
+                        "dryRun": null
+                    },
+                    {
+                        "execute": "http-sapcp:HttpRequest:1",
+                        "input": {
+                            "headers": "{\"Accept\":\"application/json;odata=nometadata\"}",
+                            "method": "GET",
+                            "authorizationHeader": "Bearer $(.getToken.output.token // .execution.input.token)",
+                            "url": "$(.execution.input.baseUrl)/teams/$(.execution.input.team)/_api/web/siteusers/getbyemail('$(.execution.input.email)')"
+                        },
+                        "alias": "getId",
+                        "description": null,
+                        "progressMessage": null,
+                        "initialDelay": null,
+                        "pause": null,
+                        "when": null,
+                        "validate": null,
+                        "autoRetry": null,
+                        "repeat": null,
+                        "errorMessages": [],
+                        "dryRun": null
+                    }
+                ],
+                "listeners": []
+            },
+            "id": "sharepoint-<<<TENANT_ID>>>:GetParticipantId:1",
+            "name": "GetParticipantId",
+            "description": "Retrieves the ID of a SharePoint user (participant) by email address.",
+            "catalog": "sharepoint-<<<TENANT_ID>>>",
+            "version": 1,
+            "inputKeys": {
+                "baseUrl": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The base URL of the SharePoint site (e.g., https://sap.sharepoint.com)."
+                },
+                "clientId": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": false,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The Client ID (Application ID) of the Azure AD application."
+                },
+                "tenantId": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": false,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The Tenant ID of the Azure AD instance."
+                },
+                "jwtToken": {
+                    "type": "string",
+                    "sensitive": true,
+                    "required": false,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The JWT (JSON Web Token) used for authentication with SharePoint. Keep this secure."
+                },
+                "team": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The SharePoint team site name."
+                },
+                "email": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The email address of the SharePoint user."
+                },
+                "token": {
+                    "type": "string",
+                    "sensitive": true,
+                    "required": false,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The OAuth token to authenticate with SharePoint."
+                }
+            },
+            "outputKeys": {
+                "id": {
+                    "type": "string",
+                    "sensitive": false,
+                    "description": "The ID of the SharePoint user."
+                }
+            },
+            "tags": {},
+            "issues": []
+        },
+        {
+            "configuration": {
+                "values": [],
+                "output": {
+                    "token": ""
+                },
+                "executors": [
+                    {
+                        "execute": "http-sapcp:SensitiveHttpRequest:1",
+                        "input": {
+                            "headers": "{\"content-type\":\"application/x-www-form-urlencoded\"}",
+                            "method": "POST",
+                            "body": "client_id=$(.execution.input.clientId)&client_secret=$(.execution.input.clientSecret)&grant_type=client_credentials&scope=https://$(.execution.input.tenant).sharepoint.com/.default",
+                            "contentType": "application/x-www-form-urlencoded",
+                            "url": "https://login.microsoftonline.com/$(.execution.input.tenant)/oauth2/v2.0/token"
+                        },
+                        "alias": "getToken",
+                        "description": null,
+                        "progressMessage": null,
+                        "initialDelay": null,
+                        "pause": null,
+                        "when": null,
+                        "validate": null,
+                        "autoRetry": null,
+                        "repeat": null,
+                        "errorMessages": [],
+                        "dryRun": null
+                    }
+                ],
+                "listeners": []
+            },
+            "id": "sharepoint-<<<TENANT_ID>>>:GetToken:1",
+            "name": "GetToken",
+            "description": "Retrieves an OAuth token from Azure AD using client ID and secret.",
+            "catalog": "sharepoint-<<<TENANT_ID>>>",
+            "version": 1,
+            "inputKeys": {
+                "clientId": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The Client ID (Application ID) of the Azure AD application."
+                },
+                "clientSecret": {
+                    "type": "string",
+                    "sensitive": true,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The client secret of the Azure AD application. Keep this secure."
+                },
+                "tenant": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": false,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The Tenant ID of the Azure AD instance."
+                }
+            },
+            "outputKeys": {
+                "token": {
+                    "type": "string",
+                    "sensitive": true,
+                    "description": "The OAuth token retrieved from Azure AD. Keep this secure."
+                }
+            },
+            "tags": {},
+            "issues": []
+        },
+        {
+            "configuration": {
+                "values": [],
+                "output": {
+                    "token": "$(.getToken.output.body | toObject.access_token)"
+                },
+                "executors": [
+                    {
+                        "execute": "http-sapcp:SensitiveHttpRequest:1",
+                        "input": {
+                            "headers": "{\"content-type\":\"application/x-www-form-urlencoded\"}",
+                            "method": "POST",
+                            "body": "client_id=$(.execution.input.clientId)&grant_type=client_credentials&scope=https://sap.sharepoint.com/.default&client_assertion=$(.execution.input.jwtToken)&client_assertion_type=urn:ietf:params:oauth:client-assertion-type:jwt-bearer",
+                            "contentType": "application/x-www-form-urlencoded",
+                            "url": "https://login.microsoftonline.com/$(.execution.input.tenantId)/oauth2/v2.0/token"
+                        },
+                        "alias": "getToken",
+                        "description": null,
+                        "progressMessage": null,
+                        "initialDelay": null,
+                        "pause": null,
+                        "when": null,
+                        "validate": null,
+                        "autoRetry": null,
+                        "repeat": null,
+                        "errorMessages": [],
+                        "dryRun": null
+                    }
+                ],
+                "listeners": []
+            },
+            "id": "sharepoint-<<<TENANT_ID>>>:GetTokenFromJWT:1",
+            "name": "GetTokenFromJWT",
+            "description": "Retrieves an OAuth token from Azure AD using a JWT (JSON Web Token).",
+            "catalog": "sharepoint-<<<TENANT_ID>>>",
+            "version": 1,
+            "inputKeys": {
+                "clientId": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The Client ID (Application ID) of the Azure AD application."
+                },
+                "tenantId": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The Tenant ID of the Azure AD instance."
+                },
+                "jwtToken": {
+                    "type": "string",
+                    "sensitive": true,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The JWT (JSON Web Token) used for authentication with Azure AD. Keep this secure."
+                }
+            },
+            "outputKeys": {
+                "token": {
+                    "type": "string",
+                    "sensitive": true,
+                    "description": "The OAuth token retrieved from Azure AD. Keep this secure."
+                }
+            },
+            "tags": {},
+            "issues": []
+        },
+        {
+            "configuration": {
+                "values": [],
+                "output": {},
+                "executors": [
+                    {
+                        "execute": "sharepoint-<<<TENANT_ID>>>:GetTokenFromJWT:1",
+                        "input": {
+                            "clientId": "$(.execution.input.clientId)",
+                            "tenantId": "$(.execution.input.tenantId)",
+                            "jwtToken": "$(.execution.input.jwtToken)"
+                        },
+                        "alias": "getToken",
+                        "description": null,
+                        "progressMessage": null,
+                        "initialDelay": null,
+                        "pause": null,
+                        "when": null,
+                        "validate": null,
+                        "autoRetry": null,
+                        "repeat": null,
+                        "errorMessages": [],
+                        "dryRun": null
+                    },
+                    {
+                        "execute": "http-sapcp:HttpRequest:1",
+                        "input": {
+                            "headers": "{\"Accept\":\"application/json;odata=nometadata\"}",
+                            "method": "GET",
+                            "authorizationHeader": "Bearer $(.getToken.output.token)",
+                            "url": "https://sap.sharepoint.com/teams/SLNDigitalOperation/_api/Web/Lists/getbytitle('SLN_Event_Calendar')/items?$top=5000"
+                        },
+                        "alias": "listSharepoint",
+                        "description": null,
+                        "progressMessage": null,
+                        "initialDelay": null,
+                        "pause": null,
+                        "when": null,
+                        "validate": null,
+                        "autoRetry": null,
+                        "repeat": null,
+                        "errorMessages": [],
+                        "dryRun": null
+                    },
+                    {
+                        "execute": "http-sapcp:HttpRequest:1",
+                        "input": {
+                            "headers": "{\"Accept\":\"application/json;odata=nometadata\"}",
+                            "method": "GET",
+                            "authorizationHeader": "Bearer $(.getToken.output.token)",
+                            "url": "https://sap.sharepoint.com/_api/Web/Lists"
+                        },
+                        "alias": "list1",
+                        "description": null,
+                        "progressMessage": null,
+                        "initialDelay": null,
+                        "pause": null,
+                        "when": null,
+                        "validate": null,
+                        "autoRetry": null,
+                        "repeat": null,
+                        "errorMessages": [],
+                        "dryRun": null
+                    },
+                    {
+                        "execute": "http-sapcp:HttpRequest:1",
+                        "input": {
+                            "headers": "{\"Accept\":\"application/json;odata=nometadata\"}",
+                            "method": "GET",
+                            "authorizationHeader": "Bearer $(.getToken.output.token)",
+                            "url": "https://sap.sharepoint.com/teams/SLNDigitalOperation/_api/web/lists/getbytitle('SLN_Event_Calendar')/ContentTypes"
+                        },
+                        "alias": "test",
+                        "description": null,
+                        "progressMessage": null,
+                        "initialDelay": null,
+                        "pause": null,
+                        "when": null,
+                        "validate": null,
+                        "autoRetry": null,
+                        "repeat": null,
+                        "errorMessages": [],
+                        "dryRun": null
+                    },
+                    {
+                        "execute": "http-sapcp:HttpRequest:1",
+                        "input": {
+                            "headers": "{\"Accept\":\"application/json;odata=nometadata\"}",
+                            "method": "GET",
+                            "authorizationHeader": "Bearer $(.getToken.output.token)",
+                            "url": "https://sap.sharepoint.com/teams/SLNDigitalOperation/_api/web/lists/getbytitle('SLN_Event_Calendar')?$select=ListItemEntityTypeFullName"
+                        },
+                        "alias": "test1",
+                        "description": null,
+                        "progressMessage": null,
+                        "initialDelay": null,
+                        "pause": null,
+                        "when": null,
+                        "validate": null,
+                        "autoRetry": null,
+                        "repeat": null,
+                        "errorMessages": [],
+                        "dryRun": null
+                    }
+                ],
+                "listeners": []
+            },
+            "id": "sharepoint-<<<TENANT_ID>>>:SharePointList:1",
+            "name": "SharePointList",
+            "description": "Listing the Elements inside the sharepoint List",
+            "catalog": "sharepoint-<<<TENANT_ID>>>",
+            "version": 1,
+            "inputKeys": {
+                "clientId": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": false,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": "8762aada-5d64-427a-aaad-05b7f657656b",
+                    "defaultValueFromInput": null,
+                    "description": "The Client ID (Application ID) of the Azure AD application."
+                },
+                "tenantId": {
+                    "type": "string",
+                    "sensitive": false,
+                    "required": false,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": "42f7676c-f455-423c-82f6-dc2d99791af7",
+                    "defaultValueFromInput": null,
+                    "description": "The Tenant ID of the Azure AD instance."
+                },
+                "jwtToken": {
+                    "type": "string",
+                    "sensitive": true,
+                    "required": true,
+                    "minSize": null,
+                    "maxSize": null,
+                    "minValue": null,
+                    "maxValue": null,
+                    "allowedValues": null,
+                    "allowedValuesFromInputKeys": null,
+                    "suggestedValues": null,
+                    "suggestedValuesFromInputKeys": null,
+                    "defaultValue": null,
+                    "defaultValueFromInput": null,
+                    "description": "The JWT (JSON Web Token) used for authentication with SharePoint. Keep this secure."
+                }
+            },
+            "outputKeys": {},
+            "tags": {
+                "feature:logs": "",
+                "feature:priority": "medium"
+            },
+            "issues": []
+        }
+    ]
+}
