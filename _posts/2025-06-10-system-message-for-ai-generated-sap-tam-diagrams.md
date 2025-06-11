@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "SAP TAM Block Diagrams + AI"
-date: 2025-06-10 10:00:00 +0000
+date: 2025-06-10 11:00:00 +0000
 tags: 
 - AI
 - SAP
