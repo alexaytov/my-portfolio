@@ -9,7 +9,7 @@ date: 2023-06-15
 project_url: ""
 github_url: ""
 demo_url: ""
-image: /i533837/my-portfolio/assets/images/jenkins.svg.png
+image: /my-portfolio/assets/images/jenkins.svg.png
 company: SAP
 ---
 

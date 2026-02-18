@@ -9,7 +9,7 @@ date: 2024-03-20
 project_url: "https://github.com/faces-up-ngo/csv-data-visualizer"
 github_url: "https://github.com/faces-up-ngo/csv-data-visualizer"
 demo_url: ""
-image: /i533837/my-portfolio/assets/images/facesup-visualizer.png
+image: /my-portfolio/assets/images/facesup-visualizer.png
 company: Moving Worlds / SAP
 ---
 

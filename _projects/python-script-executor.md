@@ -9,7 +9,7 @@ date: 2023-08-10
 project_url: ""
 github_url: ""
 demo_url: ""
-image: /i533837/my-portfolio/assets/images/python.svg.png
+image: /my-portfolio/assets/images/python.svg.png
 company: SAP
 ---
 

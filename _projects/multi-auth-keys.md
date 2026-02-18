@@ -9,7 +9,7 @@ date: 2022-08-01
 project_url: ""
 github_url: ""
 demo_url: ""
-image: /i533837/my-portfolio/assets/images/keys.jpg
+image: /my-portfolio/assets/images/keys.jpg
 company: SAP
 ---
 

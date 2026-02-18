@@ -9,7 +9,7 @@ date: 2023-05-20
 project_url: ""
 github_url: ""
 demo_url: ""
-image: /i533837/my-portfolio/assets/images/kafka.png
+image: /my-portfolio/assets/images/kafka.png
 company: SAP
 ---
 

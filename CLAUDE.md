@@ -26,7 +26,7 @@ bundle exec jekyll build
 ## Site Configuration
 
 Key configuration is in `_config.yml`:
-- `baseurl: /i533837/my-portfolio` - Required for GitHub Pages deployment on SAP's internal instance
+- `baseurl: /my-portfolio` - Required for GitHub Pages deployment on SAP's internal instance
 - `url: ''` - Empty by default, set for production if needed
 - Site uses Kramdown markdown processor
 - Plugins: jekyll-admin (for visual editing), jekyll-feed (for RSS), jekyll-sitemap (for SEO)
@@ -67,7 +67,7 @@ featured: true  # Shows in homepage carousel (select 3-5)
 project_url: ""  # External link (optional)
 github_url: ""   # GitHub repo (optional)
 demo_url: ""     # Live demo (optional)
-image: /i533837/my-portfolio/assets/images/project.png
+image: /my-portfolio/assets/images/project.png
 company: SAP
 ---
 
@@ -153,7 +153,7 @@ All social media and contact links are configured in `_config.yml` under individ
 - Leave blank to hide that social icon
 
 ### Deployment Context
-This site is deployed on SAP's internal GitHub Pages instance (`github.tools.sap`), not public GitHub Pages. The `baseurl` setting reflects the `/i533837/my-portfolio` path structure required by that environment.
+This site is deployed on SAP's internal GitHub Pages instance (`github.tools.sap`), not public GitHub Pages. The `baseurl` setting reflects the `/my-portfolio` path structure required by that environment.
 
 ## Content Guidelines
 

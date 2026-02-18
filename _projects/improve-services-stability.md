@@ -9,7 +9,7 @@ date: 2023-01-15
 project_url: ""
 github_url: ""
 demo_url: ""
-image: /i533837/my-portfolio/assets/images/java.svg
+image: /my-portfolio/assets/images/java.svg
 company: SAP
 ---
 

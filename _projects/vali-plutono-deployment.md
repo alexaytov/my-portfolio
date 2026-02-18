@@ -9,7 +9,7 @@ date: 2023-03-15
 project_url: ""
 github_url: ""
 demo_url: ""
-image: /i533837/my-portfolio/assets/images/k8s.png
+image: /my-portfolio/assets/images/k8s.png
 company: SAP
 ---
 
