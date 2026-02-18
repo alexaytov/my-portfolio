@@ -1,0 +1,146 @@
+---
+layout: compress
+---
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  {% include head.html %}
+</head>
+
+<body>
+  {% include navbar.html %}
+
+  <!-- Project Hero Section -->
+  <section class="hero is-medium has-text-centered" id="project-hero">
+    <div class="hero-body">
+      <div class="container">
+        <a href="{{site.url}}{{site.baseurl}}/projects/" class="button is-text has-text-white">
+          <span class="icon"><i class="fas fa-arrow-left"></i></span>
+          <span>Back to Projects</span>
+        </a>
+        <br><br>
+        <h1 class="title is-1 has-text-weight-bold has-text-white">{{page.title}}</h1>
+        <p class="subtitle is-4 has-text-white-bis">{{page.excerpt}}</p>
+
+        <div class="tags is-centered" style="margin-top: 1.5rem;">
+          {% if page.category %}
+          <span class="tag is-medium is-dark is-uppercase">{{page.category}}</span>
+          {% endif %}
+          {% if page.company %}
+          <span class="tag is-medium is-info">{{page.company}}</span>
+          {% endif %}
+          {% if page.date %}
+          <span class="tag is-medium is-light">{{ page.date | date: "%B %Y" }}</span>
+          {% endif %}
+        </div>
+
+        {% if page.project_url != "" or page.github_url != "" or page.demo_url != "" %}
+        <div class="buttons is-centered" style="margin-top: 1.5rem;">
+          {% if page.github_url and page.github_url != "" %}
+          <a href="{{page.github_url}}" target="_blank" rel="noopener noreferrer" class="button is-dark">
+            <span class="icon"><i class="fab fa-github"></i></span>
+            <span>View on GitHub</span>
+          </a>
+          {% endif %}
+          {% if page.demo_url and page.demo_url != "" %}
+          <a href="{{page.demo_url}}" target="_blank" rel="noopener noreferrer" class="button is-link">
+            <span class="icon"><i class="fas fa-external-link-alt"></i></span>
+            <span>Live Demo</span>
+          </a>
+          {% endif %}
+          {% if page.project_url and page.project_url != "" %}
+          <a href="{{page.project_url}}" target="_blank" rel="noopener noreferrer" class="button is-primary">
+            <span class="icon"><i class="fas fa-link"></i></span>
+            <span>Project Link</span>
+          </a>
+          {% endif %}
+        </div>
+        {% endif %}
+      </div>
+    </div>
+  </section>
+
+  <!-- Project Image -->
+  {% if page.image %}
+  <section class="section" style="padding-top: 1.5rem; padding-bottom: 1.5rem;">
+    <div class="container">
+      <figure class="image project-hero-image">
+        <img src="{{page.image}}" alt="{{page.title}}" loading="lazy">
+      </figure>
+    </div>
+  </section>
+  {% endif %}
+
+  <!-- Project Details -->
+  <section class="section">
+    <div class="container">
+      <div class="columns">
+        <!-- Main Content -->
+        <div class="column is-8 is-offset-2">
+          <div class="content" style="font-size: 1.1rem; line-height: 1.8;">
+            {{ content }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Tech Stack & Tags -->
+  {% if page.tech_stack or page.tags %}
+  <section class="section has-background-white-ter project-meta-section">
+    <div class="container">
+      <div class="columns">
+        <div class="column is-8 is-offset-2">
+          <div class="project-meta-grid">
+            {% if page.tech_stack %}
+            <div class="project-meta-item">
+              <h3 class="project-meta-title">Tech Stack</h3>
+              <div class="tags are-medium">
+                {% for tech in page.tech_stack %}
+                <span class="tag tech-tag">{{tech}}</span>
+                {% endfor %}
+              </div>
+            </div>
+            {% endif %}
+
+            {% if page.tags %}
+            <div class="project-meta-item">
+              <h3 class="project-meta-title">Tags</h3>
+              <div class="tags are-medium">
+                {% for tag in page.tags %}
+                <span class="tag category-tag">{{tag}}</span>
+                {% endfor %}
+              </div>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+  {% endif %}
+
+  <!-- Related Projects -->
+  <section class="section">
+    <div class="container">
+      <div class="columns">
+        <div class="column is-8 is-offset-2">
+          <h2 class="title is-3 has-text-centered">More Projects</h2>
+          <div class="buttons is-centered">
+            <a href="{{site.url}}{{site.baseurl}}/projects/" class="button is-medium btn-gradient">
+              <span>View All Projects</span>
+              <span class="icon"><i class="fas fa-arrow-right"></i></span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  {% include footer.html %}
+</body>
+
+</html>

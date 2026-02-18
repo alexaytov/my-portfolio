@@ -22,7 +22,7 @@ layout: compress
         <div style="justify-content: center;" class="columns is-variable is-5">
           <div class="column is-6">
             <figure class="image is-16by9 has-shadow">
-              <img style="object-fit:contain;" src="{{page.post-image}}" alt="{{post.title}}" id="post-image">
+              <img style="object-fit:contain;" src="{% if page.post-image contains 'http' %}{{page.post-image}}{% else %}{{site.baseurl}}/{{page.post-image}}{% endif %}" alt="{{page.title}}" id="post-image" loading="lazy">
             </figure>
           </div>
           <div class="subtitle column is-5 has-text-left-desktop has-text-left-fullhd has-text-left-tablet has-text-center-mobile">
@@ -30,7 +30,7 @@ layout: compress
             <p id="description" class="content is-small has-text-weight-medium is-uppercase">{{page.description | strip | strip_html | strip_newlines }}</p>
             {% endunless %}
             <p class="subtitle is-6 is-uppercase has-text-weight-normal has-text-black-ter">Published on
-              <b>{{ page.date | date: "%-B %d, %Y" }}</b> by <a href="{% if site.author-url %}{{site.author-url}}{% else %}{{site.url}}{{site.baseurl}}/#about{% endif %}" target="_blank"><b class="has-text-link"><u>{{site.author-name}}</u></b>
+              <b>{{ page.date | date: "%-B %d, %Y" }}</b> by <a href="{% if site.author-url %}{{site.author-url}}{% else %}{{site.url}}{{site.baseurl}}/#about{% endif %}" target="_blank" rel="noopener noreferrer"><b class="has-text-link"><u>{{site.author-name}}</u></b>
               </a>
             </p>
             {%- assign tags = page.tags -%}

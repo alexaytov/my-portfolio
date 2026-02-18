@@ -27,29 +27,30 @@ layout: compress
     <!--Footer begins here-->
     {% include footer.html %}
     <script>
-         const searchInput = document.getElementById('search-input');
-            const blogCards = document.querySelectorAll('.blog-card');
-            const searchButton = document.getElementById('search-btn');
+        const searchInput = document.getElementById('search-input');
+        const blogCards = document.querySelectorAll('.blog-card');
+        const searchButton = document.getElementById('search-btn');
 
-            searchInput.addEventListener('keydown', () => {
-                if (event.key === 'Enter') {
-                    event.preventDefault();
-                    searchButton.click();
+        searchInput.addEventListener('keydown', () => {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                searchButton.click();
+            }
+        });
+
+        searchButton.addEventListener('click', () => {
+            console.log("Search button clicked");
+            const query = searchInput.value.toLowerCase();
+            blogCards.forEach(card => {
+                const title = card.querySelector('h1').textContent.toLowerCase();
+                const content = card.querySelector('.content').textContent.toLowerCase();
+                if (title.includes(query) || content.includes(query)) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
                 }
             });
-
-            searchButton.addEventListener('click', () => {
-                const query = searchInput.value.toLowerCase();
-                blogCards.forEach(card => {
-                    const title = card.querySelector('h1').textContent.toLowerCase();
-                    const content = card.querySelector('.content').textContent.toLowerCase();
-                    if (title.includes(query) || content.includes(query)) {
-                        card.style.display = 'block';
-                    } else {
-                        card.style.display = 'none';
-                    }
-                });
-            });
+        });
 
     </script>
 </body>

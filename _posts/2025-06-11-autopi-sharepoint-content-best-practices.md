@@ -9,7 +9,7 @@ tags:
 - automation
 - sharepoint
 - microsoft
-post-image: "/my-portfolio/assets/posts/autopi-sharepoint/autopi-sharepoint.png"
+post-image: "assets/posts/autopi-sharepoint/autopi-sharepoint.png"
 ---
 ## Best Practices While Developing Sharepoint SAP Automation Pilot Content – Naming is Everything! 🚀
 

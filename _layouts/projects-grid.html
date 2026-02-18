@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    {% include head.html %}
+</head>
+
+<body>
+    {% include navbar.html %}
+
+    <!-- Projects Header -->
+    <section class="hero is-small has-text-centered" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding-top: 3rem;">
+        <div class="hero-body">
+            <div class="container">
+                <h1 class="title is-1 has-text-white has-text-weight-bold">All Projects</h1>
+                <p class="subtitle is-4 has-text-white-bis">A comprehensive collection of my professional and personal work</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Filters and Search -->
+    <section class="section py-4" style="background-color: #f5f5f5;">
+        <div class="container">
+            <div class="columns is-vcentered">
+                <div class="column">
+                    <div class="field has-addons">
+                        <div class="control has-icons-left is-expanded">
+                            <input class="input is-medium" type="text" id="project-search" placeholder="Search projects...">
+                            <span class="icon is-left">
+                                <i class="fas fa-search"></i>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                <div class="column is-narrow">
+                    <div class="field">
+                        <div class="control">
+                            <div class="select is-medium">
+                                <select id="category-filter">
+                                    <option value="all">All Categories</option>
+                                    <option value="automation">Automation</option>
+                                    <option value="design">Design</option>
+                                    <option value="infrastructure">Infrastructure</option>
+                                    <option value="security">Security</option>
+                                    <option value="volunteer">Volunteer</option>
+                                    <option value="university">University</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="column is-narrow">
+                    <div class="field">
+                        <div class="control">
+                            <div class="select is-medium">
+                                <select id="sort-filter">
+                                    <option value="newest">Newest First</option>
+                                    <option value="oldest">Oldest First</option>
+                                    <option value="a-z">A-Z</option>
+                                    <option value="z-a">Z-A</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active Filters Display -->
+            <div id="active-filters" class="tags"></div>
+        </div>
+    </section>
+
+    <!-- Projects Grid -->
+    <section class="section py-5">
+        <div class="container">
+            <div id="projects-grid" class="columns is-multiline">
+                {% assign all_projects = site.projects %}
+                {% for project in all_projects %}
+                <div class="column is-12-mobile is-6-tablet is-4-desktop is-3-widescreen project-item"
+                     data-category="{{project.category | default: 'other'}}"
+                     data-title="{{project.title | downcase | escape}}"
+                     data-date="{{project.date | date: '%Y-%m-%d'}}">
+                    <div class="card project-grid-card">
+                        <div class="card-image">
+                            <figure class="image is-16by9">
+                                {% if project.image %}
+                                <img src="{% if project.layout %}{{project.image}}{% else %}{{site.baseurl}}/{{project.image}}{% endif %}"
+                                     alt="{{project.title | default: project.name}}"
+                                     loading="lazy">
+                                {% endif %}
+                            </figure>
+                        </div>
+                        <div class="card-content">
+                            {% if project.category %}
+                            <span class="tag is-primary is-light is-uppercase mb-2">{{project.category}}</span>
+                            {% endif %}
+                            <h3 class="title is-5">{{project.title | default: project.name}}</h3>
+                            <p class="subtitle is-6">{{project.excerpt | default: project.description | truncate: 120}}</p>
+
+                            {% if project.tech_stack %}
+                            <div class="tags mt-3">
+                                {% for tech in project.tech_stack limit: 3 %}
+                                <span class="tag is-small">{{tech}}</span>
+                                {% endfor %}
+                                {% if project.tech_stack.size > 3 %}
+                                <span class="tag is-small is-light">+{{project.tech_stack.size | minus: 3}} more</span>
+                                {% endif %}
+                            </div>
+                            {% endif %}
+                        </div>
+                        <footer class="card-footer">
+                            {% if project.slug %}
+                            <a href="{{site.baseurl}}/projects/{{project.slug}}/" class="card-footer-item">
+                                <span class="icon-text">
+                                    <span>View Details</span>
+                                    <span class="icon"><i class="fas fa-arrow-right"></i></span>
+                                </span>
+                            </a>
+                            {% elsif project.link and project.link != "" %}
+                            <a href="{{project.link}}" target="_blank" rel="noopener noreferrer" class="card-footer-item">
+                                <span class="icon-text">
+                                    <span>View Project</span>
+                                    <span class="icon"><i class="fas fa-external-link-alt"></i></span>
+                                </span>
+                            </a>
+                            {% else %}
+                            <span class="card-footer-item has-text-grey">Coming Soon</span>
+                            {% endif %}
+                        </footer>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+
+            <!-- Project Count -->
+            <div id="project-count" class="has-text-centered mt-5">
+                <p class="has-text-grey">Showing <span id="visible-count"></span> of <span id="total-count"></span> projects</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    {% include footer.html %}
+
+    <!-- Filtering JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const projectItems = document.querySelectorAll('.project-item');
+            const searchInput = document.getElementById('project-search');
+            const categoryFilter = document.getElementById('category-filter');
+            const sortFilter = document.getElementById('sort-filter');
+            const projectsGrid = document.getElementById('projects-grid');
+            const visibleCount = document.getElementById('visible-count');
+            const totalCount = document.getElementById('total-count');
+
+            totalCount.textContent = projectItems.length;
+
+            function filterProjects() {
+                const searchTerm = searchInput.value.toLowerCase();
+                const selectedCategory = categoryFilter.value;
+                let visibleProjectsCount = 0;
+
+                projectItems.forEach(item => {
+                    const title = item.dataset.title;
+                    const category = item.dataset.category;
+
+                    const matchesSearch = title.includes(searchTerm);
+                    const matchesCategory = selectedCategory === 'all' || category === selectedCategory;
+
+                    if (matchesSearch && matchesCategory) {
+                        item.style.display = '';
+                        visibleProjectsCount++;
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+
+                // Update visible count
+                visibleCount.textContent = visibleProjectsCount;
+            }
+
+            function sortProjects() {
+                const sortValue = sortFilter.value;
+                const projectsArray = Array.from(projectItems);
+
+                projectsArray.sort((a, b) => {
+                    const dateA = new Date(a.dataset.date);
+                    const dateB = new Date(b.dataset.date);
+
+                    switch(sortValue) {
+                        case 'newest':
+                            return dateB - dateA;
+                        case 'oldest':
+                            return dateA - dateB;
+                        case 'a-z':
+                            return a.dataset.title.localeCompare(b.dataset.title);
+                        case 'z-a':
+                            return b.dataset.title.localeCompare(a.dataset.title);
+                        default:
+                            return 0;
+                    }
+                });
+
+                // Clear and re-append in new order
+                projectsArray.forEach(item => {
+                    projectsGrid.appendChild(item);
+                });
+            }
+
+            // Event listeners
+            searchInput.addEventListener('input', filterProjects);
+            categoryFilter.addEventListener('change', filterProjects);
+            sortFilter.addEventListener('change', () => {
+                sortProjects();
+                filterProjects(); // Re-apply filters after sorting
+            });
+
+            // Initialize - run sort first, then filter
+            sortProjects();
+            filterProjects();
+        });
+    </script>
+</body>
+
+</html>

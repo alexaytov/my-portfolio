@@ -1,0 +1,151 @@
+<div class="project-marquee-section">
+  {% comment %} Get projects - prioritize collection, fallback to YAML {% endcomment %}
+  {% assign all_collection_projects = site.projects | sort: "date" | reverse %}
+
+  {% if all_collection_projects.size >= 10 %}
+    {% assign marquee_projects = all_collection_projects | slice: 0, 10 %}
+  {% elsif all_collection_projects.size > 0 %}
+    {% assign marquee_projects = all_collection_projects %}
+    {% assign needed = 10 | minus: all_collection_projects.size %}
+    {% assign yaml_projects = site.data.projects | slice: 0, needed %}
+    {% assign marquee_projects = marquee_projects | concat: yaml_projects %}
+  {% else %}
+    {% assign marquee_projects = site.data.projects | slice: 0, 10 %}
+  {% endif %}
+
+  {% assign half = marquee_projects.size | divided_by: 2 %}
+  {% assign row1_projects = marquee_projects | slice: 0, half %}
+  {% assign row2_projects = marquee_projects | slice: half, half %}
+
+  <!-- Row 1: Scrolls Left -->
+  <div class="marquee-container">
+    <div class="marquee-track marquee-left">
+      {% for project in row1_projects %}
+      <a href="{% if project.slug %}{{site.baseurl}}/projects/{{project.slug}}/{% elsif project.link and project.link != '' %}{{project.link}}{% else %}#{% endif %}"
+         class="marquee-card"
+         {% if project.link and project.link != "" and project.slug == nil %}target="_blank" rel="noopener noreferrer"{% endif %}>
+        <div class="card-image-wrapper">
+          {% if project.image %}
+          <img src="{% if project.layout %}{{project.image}}{% else %}{{site.baseurl}}/{{project.image}}{% endif %}" alt="{{project.title | default: project.name}}" loading="lazy">
+          {% else %}
+          <div class="card-placeholder"><i class="fas fa-code fa-2x"></i></div>
+          {% endif %}
+        </div>
+        <div class="card-content">
+          {% if project.category %}
+          <span class="category-tag">{{project.category}}</span>
+          {% endif %}
+          <h3 class="card-title">{{project.title | default: project.name}}</h3>
+          <p class="card-description">{{project.excerpt | default: project.description | truncate: 80}}</p>
+          {% if project.tech_stack %}
+          <div class="card-tags">
+            {% for tech in project.tech_stack limit: 3 %}
+            <span class="tech-tag">{{tech}}</span>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+      </a>
+      {% endfor %}
+      <!-- Duplicate for seamless loop -->
+      {% for project in row1_projects %}
+      <a href="{% if project.slug %}{{site.baseurl}}/projects/{{project.slug}}/{% elsif project.link and project.link != '' %}{{project.link}}{% else %}#{% endif %}"
+         class="marquee-card"
+         {% if project.link and project.link != "" and project.slug == nil %}target="_blank" rel="noopener noreferrer"{% endif %}
+         aria-hidden="true">
+        <div class="card-image-wrapper">
+          {% if project.image %}
+          <img src="{% if project.layout %}{{project.image}}{% else %}{{site.baseurl}}/{{project.image}}{% endif %}" alt="{{project.title | default: project.name}}" loading="lazy">
+          {% else %}
+          <div class="card-placeholder"><i class="fas fa-code fa-2x"></i></div>
+          {% endif %}
+        </div>
+        <div class="card-content">
+          {% if project.category %}
+          <span class="category-tag">{{project.category}}</span>
+          {% endif %}
+          <h3 class="card-title">{{project.title | default: project.name}}</h3>
+          <p class="card-description">{{project.excerpt | default: project.description | truncate: 80}}</p>
+          {% if project.tech_stack %}
+          <div class="card-tags">
+            {% for tech in project.tech_stack limit: 3 %}
+            <span class="tech-tag">{{tech}}</span>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Row 2: Scrolls Right -->
+  <div class="marquee-container">
+    <div class="marquee-track marquee-right">
+      {% for project in row2_projects %}
+      <a href="{% if project.slug %}{{site.baseurl}}/projects/{{project.slug}}/{% elsif project.link and project.link != '' %}{{project.link}}{% else %}#{% endif %}"
+         class="marquee-card"
+         {% if project.link and project.link != "" and project.slug == nil %}target="_blank" rel="noopener noreferrer"{% endif %}>
+        <div class="card-image-wrapper">
+          {% if project.image %}
+          <img src="{% if project.layout %}{{project.image}}{% else %}{{site.baseurl}}/{{project.image}}{% endif %}" alt="{{project.title | default: project.name}}" loading="lazy">
+          {% else %}
+          <div class="card-placeholder"><i class="fas fa-code fa-2x"></i></div>
+          {% endif %}
+        </div>
+        <div class="card-content">
+          {% if project.category %}
+          <span class="category-tag">{{project.category}}</span>
+          {% endif %}
+          <h3 class="card-title">{{project.title | default: project.name}}</h3>
+          <p class="card-description">{{project.excerpt | default: project.description | truncate: 80}}</p>
+          {% if project.tech_stack %}
+          <div class="card-tags">
+            {% for tech in project.tech_stack limit: 3 %}
+            <span class="tech-tag">{{tech}}</span>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+      </a>
+      {% endfor %}
+      <!-- Duplicate for seamless loop -->
+      {% for project in row2_projects %}
+      <a href="{% if project.slug %}{{site.baseurl}}/projects/{{project.slug}}/{% elsif project.link and project.link != '' %}{{project.link}}{% else %}#{% endif %}"
+         class="marquee-card"
+         {% if project.link and project.link != "" and project.slug == nil %}target="_blank" rel="noopener noreferrer"{% endif %}
+         aria-hidden="true">
+        <div class="card-image-wrapper">
+          {% if project.image %}
+          <img src="{% if project.layout %}{{project.image}}{% else %}{{site.baseurl}}/{{project.image}}{% endif %}" alt="{{project.title | default: project.name}}" loading="lazy">
+          {% else %}
+          <div class="card-placeholder"><i class="fas fa-code fa-2x"></i></div>
+          {% endif %}
+        </div>
+        <div class="card-content">
+          {% if project.category %}
+          <span class="category-tag">{{project.category}}</span>
+          {% endif %}
+          <h3 class="card-title">{{project.title | default: project.name}}</h3>
+          <p class="card-description">{{project.excerpt | default: project.description | truncate: 80}}</p>
+          {% if project.tech_stack %}
+          <div class="card-tags">
+            {% for tech in project.tech_stack limit: 3 %}
+            <span class="tech-tag">{{tech}}</span>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- View All Button -->
+  <div class="has-text-centered" style="margin-top: 2.5rem;">
+    <a href="{{site.url}}{{site.baseurl}}/projects/" class="button is-primary is-medium is-rounded">
+      <span>View All Projects</span>
+      <span class="icon"><i class="fas fa-arrow-right"></i></span>
+    </a>
+  </div>
+</div>

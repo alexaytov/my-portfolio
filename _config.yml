@@ -4,7 +4,7 @@ markdown: kramdown
 # URL of the Site
 url: ''
 # Base URL of the Site (i.e., Name of the Repository in which the Site is hosted)
-baseurl: /my-portfolio
+baseurl: /i533837/my-portfolio
 
 # Title of the Site
 title: Aleksandar Aytov
@@ -22,7 +22,7 @@ heroimage: https://images.pexels.com/photos/220444/pexels-photo-220444.jpeg?auto
 
 # Social Media and Contact
 # If you don't want to use any icon, you can leave them blank.
-email: alexaytov92@gmail.com
+email: aleksandar.aytov@sap.com
 facebook_username: aitovi
 twitter_username:
 instagram_username:
@@ -56,6 +56,7 @@ sass:
 plugins:
   - jekyll-admin
   - jekyll-feed
+  - jekyll-sitemap
 
 # Permalink
 permalink: "post/:title"
@@ -63,6 +64,12 @@ permalink: "post/:title"
 # Compress
 compress_html:
   clippings: all
+
+# Collections
+collections:
+  projects:
+    output: true
+    permalink: /projects/:slug/
 
 # Defaults
 defaults:
@@ -80,6 +87,11 @@ defaults:
       type: 'pages'
     values:
       layout: page
+  -
+    scope:
+      type: 'projects'
+    values:
+      layout: project-detail
 
 # Exclude
 exclude:

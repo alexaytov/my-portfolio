@@ -12,29 +12,42 @@ layout: compress
   {% include about.html %}
   {% include project.html %}
   {% include university.html %}
-  <!-- {% include contact.html %} -->
   <!--Footer begins here-->
   {% include footer.html %}
 </body>
 <script>
-  var navItems = document.getElementsByClassName('navbar-item');
+  var navItems = document.querySelectorAll('.navbar-end .navbar-item');
   var heroes = document.getElementsByClassName('hero');
-  const viewOffset = 200; 
+  const viewOffset = 200;
+
+  // Map section IDs to navbar items
+  var sectionToNav = {
+    'hero': 0,      // HOME (showcase)
+    'about': 1,     // ABOUT
+    'work': 2,      // MY WORK
+    'university': 4 // UNIVERSITY (skip index 3 which is PROJECTS page link)
+  };
 
   window.addEventListener("scroll", function (event) {
     var scroll = this.scrollY;
-    var position = window.pageYOffset;
 
+    // Remove active from all nav items
     for (var i = 0; i < navItems.length; i++) {
       navItems[i].classList.remove('is-active');
     }
 
+    // Find which section is in view and highlight corresponding nav item
     for (var i = 0; i < heroes.length; i++) {
-        var sectionTop = heroes[i].offsetTop-viewOffset;
-        var sectionBottom = heroes[i].offsetTop + heroes[i].offsetHeight-viewOffset;
+      var sectionTop = heroes[i].offsetTop - viewOffset;
+      var sectionBottom = heroes[i].offsetTop + heroes[i].offsetHeight - viewOffset;
+      var sectionId = heroes[i].id;
 
-        if (scroll >= sectionTop && scroll < sectionBottom) {
-          navItems[i+1].classList.add('is-active');
+      if (scroll >= sectionTop && scroll < sectionBottom) {
+        var navIndex = sectionToNav[sectionId];
+        if (navIndex !== undefined && navItems[navIndex]) {
+          navItems[navIndex].classList.add('is-active');
+        }
+        break;
       }
     }
   });
