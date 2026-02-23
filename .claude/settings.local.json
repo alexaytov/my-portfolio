@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Bash(bundle exec jekyll build:*)"
+      "Bash(bundle exec jekyll build:*)",
+      "WebFetch(domain:www.uni-sofia.bg)",
+      "WebFetch(domain:www.fmi.uni-sofia.bg)"
     ]
   }
 }

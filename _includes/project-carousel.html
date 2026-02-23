@@ -1,6 +1,6 @@
 <div class="project-marquee-section">
-  {% comment %} Get projects - prioritize collection, fallback to YAML {% endcomment %}
-  {% assign all_collection_projects = site.projects | sort: "date" | reverse %}
+  {% comment %} Get non-university projects only {% endcomment %}
+  {% assign all_collection_projects = site.projects | where_exp: "item", "item.category != 'university'" | sort: "date" | reverse %}
 
   {% if all_collection_projects.size >= 10 %}
     {% assign marquee_projects = all_collection_projects | slice: 0, 10 %}

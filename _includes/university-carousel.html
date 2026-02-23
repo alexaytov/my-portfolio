@@ -1,0 +1,71 @@
+<div class="project-marquee-section">
+  {% comment %} Get university projects only {% endcomment %}
+  {% assign university_projects = site.projects | where: "category", "university" | sort: "date" | reverse %}
+
+  {% comment %} Fallback to YAML if no collection projects {% endcomment %}
+  {% if university_projects.size == 0 %}
+    {% assign university_projects = site.data.university-projects %}
+  {% endif %}
+
+  <!-- Single Row: Scrolls Left -->
+  <div class="marquee-container">
+    <div class="marquee-track marquee-left">
+      {% for project in university_projects %}
+      <a href="{% if project.slug %}{{site.baseurl}}/projects/{{project.slug}}/{% elsif project.link and project.link != '' %}{{site.baseurl}}/{{project.link}}{% else %}#{% endif %}"
+         class="marquee-card"
+         {% if project.link contains 'http' %}target="_blank" rel="noopener noreferrer"{% endif %}>
+        <div class="card-image-wrapper">
+          {% if project.image %}
+          <img src="{% if project.image contains 'http' %}{{project.image}}{% elsif project.layout %}{{project.image}}{% else %}{{site.baseurl}}/{{project.image}}{% endif %}" alt="{{project.title | default: project.name}}" loading="lazy">
+          {% else %}
+          <div class="card-placeholder"><i class="fas fa-graduation-cap fa-2x"></i></div>
+          {% endif %}
+        </div>
+        <div class="card-content">
+          {% if project.category %}
+          <span class="category-tag">{{project.category}}</span>
+          {% endif %}
+          <h3 class="card-title">{{project.title | default: project.name}}</h3>
+          <p class="card-description">{{project.excerpt | default: project.description | truncate: 80}}</p>
+          {% if project.tech_stack %}
+          <div class="card-tags">
+            {% for tech in project.tech_stack limit: 3 %}
+            <span class="tech-tag">{{tech}}</span>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+      </a>
+      {% endfor %}
+      <!-- Duplicate for seamless loop -->
+      {% for project in university_projects %}
+      <a href="{% if project.slug %}{{site.baseurl}}/projects/{{project.slug}}/{% elsif project.link and project.link != '' %}{{site.baseurl}}/{{project.link}}{% else %}#{% endif %}"
+         class="marquee-card"
+         {% if project.link contains 'http' %}target="_blank" rel="noopener noreferrer"{% endif %}
+         aria-hidden="true">
+        <div class="card-image-wrapper">
+          {% if project.image %}
+          <img src="{% if project.image contains 'http' %}{{project.image}}{% elsif project.layout %}{{project.image}}{% else %}{{site.baseurl}}/{{project.image}}{% endif %}" alt="{{project.title | default: project.name}}" loading="lazy">
+          {% else %}
+          <div class="card-placeholder"><i class="fas fa-graduation-cap fa-2x"></i></div>
+          {% endif %}
+        </div>
+        <div class="card-content">
+          {% if project.category %}
+          <span class="category-tag">{{project.category}}</span>
+          {% endif %}
+          <h3 class="card-title">{{project.title | default: project.name}}</h3>
+          <p class="card-description">{{project.excerpt | default: project.description | truncate: 80}}</p>
+          {% if project.tech_stack %}
+          <div class="card-tags">
+            {% for tech in project.tech_stack limit: 3 %}
+            <span class="tech-tag">{{tech}}</span>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</div>
