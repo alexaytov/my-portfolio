@@ -5,7 +5,7 @@ excerpt: "Enabling proper HTML rendering in custom function templating for notif
 category: automation
 tags: [Email, Bug Fix, Templating]
 tech_stack: [Java, HTML, Templating]
-date: 2023-05-15
+date: 2026-02-23
 project_url: ""
 github_url: ""
 demo_url: ""
