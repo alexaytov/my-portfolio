@@ -3,7 +3,12 @@
     "allow": [
       "Bash(bundle exec jekyll build:*)",
       "WebFetch(domain:www.uni-sofia.bg)",
-      "WebFetch(domain:www.fmi.uni-sofia.bg)"
+      "WebFetch(domain:www.fmi.uni-sofia.bg)",
+      "WebSearch",
+      "WebFetch(domain:stackoverflow.com)",
+      "WebFetch(domain:css-tricks.com)",
+      "mcp__searxng__searxng_web_search",
+      "mcp__searxng__web_url_read"
     ]
   }
 }

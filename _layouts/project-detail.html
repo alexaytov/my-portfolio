@@ -16,7 +16,7 @@ layout: compress
   <section class="hero is-medium has-text-centered" id="project-hero">
     <div class="hero-body">
       <div class="container">
-        <a href="{{site.url}}{{site.baseurl}}/projects/" class="button is-text has-text-white">
+        <a href="{{site.url}}{{site.baseurl}}/projects/" class="button btn-gradient is-rounded">
           <span class="icon"><i class="fas fa-arrow-left"></i></span>
           <span>Back to Projects</span>
         </a>
@@ -39,19 +39,19 @@ layout: compress
         {% if page.project_url != "" or page.github_url != "" or page.demo_url != "" %}
         <div class="buttons is-centered" style="margin-top: 1.5rem;">
           {% if page.github_url and page.github_url != "" %}
-          <a href="{{page.github_url}}" target="_blank" rel="noopener noreferrer" class="button is-dark">
+          <a href="{{page.github_url}}" target="_blank" rel="noopener noreferrer" class="button btn-gradient is-rounded">
             <span class="icon"><i class="fab fa-github"></i></span>
             <span>View on GitHub</span>
           </a>
           {% endif %}
           {% if page.demo_url and page.demo_url != "" %}
-          <a href="{{page.demo_url}}" target="_blank" rel="noopener noreferrer" class="button is-link">
+          <a href="{{page.demo_url}}" target="_blank" rel="noopener noreferrer" class="button btn-gradient is-rounded">
             <span class="icon"><i class="fas fa-external-link-alt"></i></span>
             <span>Live Demo</span>
           </a>
           {% endif %}
           {% if page.project_url and page.project_url != "" %}
-          <a href="{{page.project_url}}" target="_blank" rel="noopener noreferrer" class="button is-primary">
+          <a href="{{page.project_url}}" target="_blank" rel="noopener noreferrer" class="button btn-gradient is-rounded">
             <span class="icon"><i class="fas fa-link"></i></span>
             <span>Project Link</span>
           </a>
