@@ -2,7 +2,7 @@
 layout: post
 title: "Deployed Shared Open WebUI Instance in Cloud Foundry"
 date: 2026-02-24 10:00:00
-post-image: "https://images.unsplash.com/photo-1667372393119-3d4c48d07fc9?q=80&w=1632&auto=format&fit=crop"
+post-image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=1632&auto=format&fit=crop"
 description: "How we deployed and integrated Open WebUI with enterprise AI in Cloud Foundry to empower teams across the organization"
 tags:
   - Cloud Foundry
