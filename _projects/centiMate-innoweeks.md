@@ -1,6 +1,6 @@
 ---
 title: "CentiMate - SAP InnoWeeks 2024"
-slug: centiMate-innoweeks
+slug: centimate-innoweeks
 excerpt: "Be a part of the InnoWeeks 2024 challenge"
 category: volunteer
 tags: [Innovation, Hackathon, SAP]
