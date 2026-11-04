@@ -5,8 +5,9 @@ event: "Technical University of Sofia"
 event_date: "2026-10-07"
 format: Lecture
 featured: true
-image: /assets/images/talks/ai-assisted-software-engineering.jpg
-image_alt: "Opening slide of AI-Assisted Software Engineering, illustrating copilot, live-agent, and autonomous-agent workflows."
+image: /assets/images/talks/ai-assisted-software-engineering/2026-10-07-speaker.jpg
+image_alt: "Aleksandar Aytov presenting AI-assisted software engineering to second-year students at the Technical University of Sofia."
+image_caption: "Presenting to second-year students at the Technical University of Sofia."
 resources:
   - label: Slides (PDF)
     url: /assets/talks/ai-assisted-software-engineering-v21.pdf
@@ -27,3 +28,8 @@ Using a Java library system as a running example, the presentation covers:
 - Choosing a workflow that supports learning, with human oversight as autonomy increases.
 
 The slides and PowerPoint are available above. I also presented this material to [first-year students on 16 October]({{ '/talks/ai-assisted-software-engineering-first-year/' | relative_url }}).
+
+<figure class="talk-cover">
+  <img src="{{ '/assets/images/talks/ai-assisted-software-engineering/2026-10-07-audience.jpg' | relative_url }}" alt="Students seated in the lecture hall during the second-year AI-assisted software engineering session." width="1200" height="900" loading="lazy" decoding="async">
+  <figcaption>The audience during the second-year session at the Technical University of Sofia.</figcaption>
+</figure>
