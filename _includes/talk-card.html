@@ -1,0 +1,22 @@
+<article class="listing-card talk-card">
+  <a class="talk-card-link" href="{{ include.talk.url | relative_url }}" aria-labelledby="talk-{{ include.talk.slug }}">
+    {% if include.talk.image and include.talk.image != '' %}
+    <div class="listing-card-media">
+      <figure class="image is-16by9">
+        <img src="{% if include.talk.image contains '://' %}{{ include.talk.image | escape }}{% else %}{{ include.talk.image | relative_url | escape }}{% endif %}"
+             alt="" loading="lazy" decoding="async" width="1200" height="675">
+      </figure>
+    </div>
+    {% endif %}
+    <div class="listing-card-body">
+      {% if include.heading == 'h3' %}
+      <h3 class="title" id="talk-{{ include.talk.slug }}">{{ include.talk.title | escape }}</h3>
+      {% else %}
+      <h2 class="title" id="talk-{{ include.talk.slug }}">{{ include.talk.title | escape }}</h2>
+      {% endif %}
+      {% include talk-meta.html talk=include.talk %}
+      {% if include.talk.excerpt %}<p class="talk-excerpt">{{ include.talk.excerpt | escape }}</p>{% endif %}
+      <span class="talk-card-action">View talk <i class="fas fa-arrow-right" aria-hidden="true"></i></span>
+    </div>
+  </a>
+</article>

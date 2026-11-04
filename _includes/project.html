@@ -1,12 +1,27 @@
-    <!--Main Section-->
-    <section class="hero" id="work">
-        <div class="hero-body">
-            <div class="container">
-                <div class="project-header has-text-centered">
-                    <h2 class="title is-2">My Work</h2>
-                    <p class="section-description">Featured Projects</p>
-                </div>
-                {% include project-carousel.html %}
-            </div>
-        </div>
-    </section>
+{% assign empty_work = '' | split: ',' %}
+{% assign work_projects = site.projects | default: empty_work | where_exp: 'item', "item.category != 'university'" | sort: 'date' | reverse | slice: 0, 5 %}
+{% if work_projects.size == 0 %}{% assign work_projects = site.data.projects | default: empty_work | slice: 0, 5 %}{% endif %}
+{% assign university_work = site.projects | default: empty_work | where: 'category', 'university' | sort: 'date' | reverse %}
+{% if university_work.size == 0 %}{% assign university_work = site.data.university-projects | default: empty_work %}{% endif %}
+{% assign work_talks = site.talks | default: empty_work | where: 'featured', true | sort: 'event_date' | reverse %}
+{% if work_talks.size == 0 %}{% assign work_talks = site.talks | default: empty_work | sort: 'event_date' | reverse %}{% endif %}
+<section class="hero work-showcase" id="work" aria-labelledby="work-title">
+  <div class="hero-body">
+    <div class="container">
+      <header class="project-header">
+        <h2 class="title is-2" id="work-title">My Work</h2>
+        <p class="section-description">Projects I've built, courses I've taught, and ideas I've shared.</p>
+      </header>
+      <div class="work-tabs" role="tablist" aria-label="Work categories" hidden>
+        <button type="button" role="tab" id="work-tab-projects" aria-controls="work-projects" aria-selected="true">Projects</button>
+        <button type="button" role="tab" id="work-tab-university" aria-controls="work-university" aria-selected="false" tabindex="-1">University</button>
+        <button type="button" role="tab" id="work-tab-talks" aria-controls="work-talks" aria-selected="false" tabindex="-1">Talks</button>
+      </div>
+      <div class="work-columns">
+        {% include work-panel.html key='projects' title='Projects' items=work_projects archive='/projects/' archive_label='View all projects' %}
+        {% include work-panel.html key='university' title='University' items=university_work archive='/projects/?category=university' archive_label='View academic work' %}
+        {% include work-panel.html key='talks' title='Talks' items=work_talks archive='/talks/' archive_label='View all talks' %}
+      </div>
+    </div>
+  </div>
+</section>

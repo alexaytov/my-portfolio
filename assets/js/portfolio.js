@@ -40,93 +40,252 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 
-  document.querySelectorAll('.marquee-container').forEach(carousel => {
-    const track = carousel.querySelector('.marquee-track');
-    let gesture = null;
-    let suppressClick = false;
+  const work = document.querySelector('.work-showcase');
+  if (work) {
+    const tabs = Array.from(work.querySelectorAll('[role="tab"]'));
+    const tablist = work.querySelector('.work-tabs');
+    const panels = Array.from(work.querySelectorAll('.work-panel'));
+    const compact = window.matchMedia('(max-width: 1023px)');
+    let selectedCategory = 'projects';
+    const carousels = new Map();
 
-    function motion() {
-      const animation = track.getAnimations().find(item =>
-        item.animationName === 'marquee-scroll-left' || item.animationName === 'marquee-scroll-right');
-      if (!animation) return null;
-      return {
-        animation,
-        time: Number(animation.currentTime),
-        duration: Number(animation.effect.getTiming().duration),
-        distance: (track.getBoundingClientRect().width + parseFloat(getComputedStyle(track).columnGap)) / 2,
-        direction: animation.animationName === 'marquee-scroll-left' ? -1 : 1
-      };
-    }
+    panels.forEach(panel => {
+      const viewport = panel.querySelector('.work-viewport');
+      if (!viewport) return;
+      const slides = Array.from(viewport.querySelectorAll('.work-slide'));
+      const controls = panel.querySelector('.work-controls');
+      const pills = Array.from(controls.querySelectorAll('.work-pill'));
+      const fills = pills.map(pill => pill.querySelector('.work-pill-fill'));
+      const status = panel.querySelector('.work-status');
+      const slideDuration = 7000;
+      let current = 0;
+      let width = 0;
+      let progress = null;
+      let inView = false;
+      let hovered = false;
+      let keyboardFocus = false;
+      let pressed = false;
+      let scrolling = false;
+      let settleTimer;
+      let gesture = null;
+      let suppressClick = false;
+      let suppressTimer;
 
-    // Scrub the existing loop so dragging starts exactly where the cards are.
-    function moveLoop(loop, pixels) {
-      const time = loop.time + loop.direction * pixels / loop.distance * loop.duration;
-      loop.animation.currentTime = ((time % loop.duration) + loop.duration) % loop.duration;
-    }
-
-    carousel.addEventListener('pointerdown', event => {
-      if (!event.isPrimary || event.button !== 0) return;
-      suppressClick = false;
-      const loop = motion();
-      // Scrollable mobile/reduced-motion rows retain native touch scrolling.
-      if (event.pointerType === 'touch' && !loop) return;
-      carousel.classList.add('is-dragging');
-      gesture = {
-        id: event.pointerId,
-        x: event.clientX,
-        y: event.clientY,
-        scroll: carousel.scrollLeft,
-        loop,
-        dragged: false
-      };
-    });
-
-    window.addEventListener('pointermove', event => {
-      if (!gesture || event.pointerId !== gesture.id) return;
-      const deltaX = event.clientX - gesture.x;
-      const deltaY = event.clientY - gesture.y;
-      if (!gesture.dragged) {
-        if (Math.abs(deltaX) < 6 || Math.abs(deltaX) <= Math.abs(deltaY)) return;
-        gesture.dragged = true;
-        carousel.setPointerCapture(event.pointerId);
+      controls.hidden = slides.length < 2;
+      function canPlay() {
+        return slides.length > 1 && !reduceMotion.matches && inView && !panel.hidden &&
+          !document.hidden && !hovered && !keyboardFocus && !pressed && !scrolling && !gesture;
       }
-      event.preventDefault();
-      if (gesture.loop) moveLoop(gesture.loop, deltaX);
-      else carousel.scrollLeft = gesture.scroll - deltaX;
-    });
-
-    function endGesture(event) {
-      if (!gesture || (event.pointerId !== undefined && event.pointerId !== gesture.id)) return;
-      suppressClick = gesture.dragged;
-      const pointerId = gesture.id;
-      gesture = null;
-      carousel.classList.remove('is-dragging');
-      if (carousel.hasPointerCapture(pointerId)) carousel.releasePointerCapture(pointerId);
-    }
-    window.addEventListener('pointerup', endGesture);
-    window.addEventListener('pointercancel', endGesture);
-    window.addEventListener('blur', endGesture);
-    carousel.addEventListener('lostpointercapture', event => {
-      if (event.target === carousel) endGesture(event);
-    });
-    carousel.addEventListener('dragstart', event => event.preventDefault());
-    carousel.addEventListener('click', event => {
-      if (suppressClick && event.detail > 0) {
+      function syncPlayback() {
+        if (!progress) return;
+        if (canPlay()) progress.play();
+        else progress.pause();
+      }
+      function resetProgress() {
+        if (progress) progress.cancel();
+        progress = null;
+        fills.forEach((fill, index) => {
+          fill.style.transform = `scaleX(${index < current || (reduceMotion.matches && index === current) ? 1 : 0})`;
+        });
+        if (slides.length < 2 || reduceMotion.matches) return;
+        progress = fills[current].animate([
+          {transform: 'scaleX(0)'}, {transform: 'scaleX(1)'}
+        ], {duration: slideDuration, easing: 'linear', fill: 'forwards'});
+        progress.pause();
+        progress.onfinish = () => {
+          if (canPlay()) goTo((current + 1) % slides.length, {automatic: true, instant: current === slides.length - 1});
+        };
+        syncPlayback();
+      }
+      function update() {
+        pills.forEach((pill, index) => {
+          if (index === current) pill.setAttribute('aria-current', 'true');
+          else pill.removeAttribute('aria-current');
+        });
+        slides.forEach((slide, index) => { slide.inert = index !== current; });
+      }
+      function announce() {
+        status.textContent = `${current + 1} of ${slides.length}: ${slides[current].querySelector('.work-card-title').textContent}`;
+      }
+      function goTo(index, {instant = false, automatic = false} = {}) {
+        current = Math.max(0, Math.min(index, slides.length - 1));
+        update();
+        resetProgress();
+        if (!automatic) announce();
+        viewport.scrollTo({left: current * viewport.clientWidth,
+          behavior: instant || reduceMotion.matches ? 'instant' : 'smooth'});
+      }
+      function align() {
+        if (viewport.clientWidth) {
+          width = viewport.clientWidth;
+          viewport.scrollTo({left: current * width, behavior: 'instant'});
+        }
+        syncPlayback();
+      }
+      carousels.set(panel, align);
+      update();
+      resetProgress();
+      pills.forEach((pill, index) => pill.addEventListener('click', () => goTo(index)));
+      viewport.addEventListener('keydown', event => {
+        const destinations = {ArrowLeft: current - 1, ArrowRight: current + 1, Home: 0, End: slides.length - 1};
+        if (!(event.key in destinations)) return;
         event.preventDefault();
-        event.stopPropagation();
-      }
-      suppressClick = false;
-    }, true);
+        // Keep focus on the carousel when a key hides the focused card.
+        viewport.focus({preventScroll: true});
+        goTo(destinations[event.key]);
+      });
+      viewport.addEventListener('scroll', () => {
+        scrolling = true;
+        syncPlayback();
+        clearTimeout(settleTimer);
+        settleTimer = setTimeout(() => {
+          scrolling = false;
+          if (viewport.clientWidth && !gesture) {
+            const nearest = Math.max(0, Math.min(Math.round(viewport.scrollLeft / viewport.clientWidth), slides.length - 1));
+            if (nearest !== current) {
+              current = nearest;
+              update();
+              resetProgress();
+              announce();
+            }
+          }
+          syncPlayback();
+        }, 150);
+      }, {passive: true});
+      new ResizeObserver(() => {
+        if (viewport.clientWidth && viewport.clientWidth !== width) align();
+      }).observe(viewport);
+      new IntersectionObserver(entries => {
+        inView = entries[0].isIntersecting && entries[0].intersectionRatio >= 0.35;
+        syncPlayback();
+      }, {threshold: [0, 0.35]}).observe(viewport);
+      panel.addEventListener('pointerenter', event => {
+        if (event.pointerType === 'mouse') { hovered = true; syncPlayback(); }
+      });
+      panel.addEventListener('pointerleave', event => {
+        if (event.pointerType === 'mouse') { hovered = false; syncPlayback(); }
+      });
+      panel.addEventListener('focusin', () => {
+        keyboardFocus = document.activeElement.matches(':focus-visible');
+        syncPlayback();
+      });
+      panel.addEventListener('focusout', () => {
+        queueMicrotask(() => {
+          keyboardFocus = panel.contains(document.activeElement) && document.activeElement.matches(':focus-visible');
+          syncPlayback();
+        });
+      });
+      panel.addEventListener('keydown', () => { keyboardFocus = true; syncPlayback(); });
+      panel.addEventListener('pointerdown', () => { keyboardFocus = false; syncPlayback(); });
+      document.addEventListener('visibilitychange', syncPlayback);
+      reduceMotion.addEventListener('change', resetProgress);
 
-    carousel.addEventListener('wheel', event => {
-      if (Math.abs(event.deltaX) <= Math.abs(event.deltaY)) return;
-      const loop = motion();
-      if (!loop) return;
-      event.preventDefault();
-      const unit = event.deltaMode === 1 ? 16 : event.deltaMode === 2 ? carousel.clientWidth : 1;
-      moveLoop(loop, -event.deltaX * unit);
-    }, {passive: false});
-  });
+      // Touch and trackpads use native scrolling; mouse dragging follows the pointer.
+      viewport.addEventListener('pointerdown', event => {
+        if (!event.isPrimary || event.button !== 0) return;
+        pressed = true;
+        syncPlayback();
+        if (event.pointerType !== 'mouse') return;
+        clearTimeout(suppressTimer);
+        suppressClick = false;
+        gesture = {id: event.pointerId, x: event.clientX, y: event.clientY, scroll: viewport.scrollLeft, dragged: false};
+      });
+      viewport.addEventListener('pointermove', event => {
+        if (!gesture || gesture.id !== event.pointerId) return;
+        const dx = event.clientX - gesture.x;
+        if (!gesture.dragged) {
+          if (Math.abs(dx) < 6 || Math.abs(dx) <= Math.abs(event.clientY - gesture.y)) return;
+          gesture.dragged = true;
+          viewport.classList.add('is-dragging');
+          viewport.setPointerCapture(event.pointerId);
+        }
+        event.preventDefault();
+        viewport.scrollLeft = gesture.scroll - dx;
+      });
+      function endDrag(event) {
+        pressed = false;
+        if (!gesture || (event.pointerId !== undefined && event.pointerId !== gesture.id)) {
+          syncPlayback();
+          return;
+        }
+        const {id, dragged} = gesture;
+        gesture = null;
+        suppressClick = dragged;
+        const nearest = Math.round(viewport.scrollLeft / viewport.clientWidth);
+        viewport.classList.remove('is-dragging');
+        if (viewport.hasPointerCapture(id)) viewport.releasePointerCapture(id);
+        if (dragged) goTo(nearest);
+        suppressTimer = setTimeout(() => { suppressClick = false; }, 300);
+        syncPlayback();
+      }
+      window.addEventListener('pointerup', endDrag);
+      window.addEventListener('pointercancel', endDrag);
+      window.addEventListener('blur', endDrag);
+      viewport.addEventListener('lostpointercapture', endDrag);
+      viewport.addEventListener('dragstart', event => event.preventDefault());
+      viewport.addEventListener('click', event => {
+        if (suppressClick && event.detail > 0) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+        suppressClick = false;
+      }, true);
+    });
+
+    function showCategory(category, focusTab = false) {
+      selectedCategory = category;
+      tabs.forEach(tab => {
+        const active = tab.id === `work-tab-${category}`;
+        tab.setAttribute('aria-selected', String(active));
+        tab.tabIndex = active ? 0 : -1;
+        if (active && focusTab) tab.focus({preventScroll: true});
+      });
+      panels.forEach(panel => {
+        const key = panel.dataset.workCategory;
+        const hide = compact.matches && key !== category;
+        if (hide && panel.contains(document.activeElement)) {
+          work.querySelector(`#work-tab-${category}`).focus({preventScroll: true});
+        }
+        panel.hidden = hide;
+        panel.setAttribute('role', compact.matches ? 'tabpanel' : 'region');
+        panel.setAttribute('aria-labelledby', compact.matches ? `work-tab-${key}` : `work-heading-${key}`);
+        carousels.get(panel)?.();
+      });
+    }
+    function updateLayout() {
+      tablist.hidden = !compact.matches;
+      if (!compact.matches && tablist.contains(document.activeElement)) {
+        work.querySelector(`#work-${selectedCategory} .work-viewport`)?.focus({preventScroll: true});
+      }
+      showCategory(selectedCategory);
+    }
+    tabs.forEach((tab, index) => {
+      tab.addEventListener('click', () => showCategory(panels[index].dataset.workCategory));
+      tab.addEventListener('keydown', event => {
+        let nextIndex;
+        if (event.key === 'ArrowRight') nextIndex = (index + 1) % tabs.length;
+        else if (event.key === 'ArrowLeft') nextIndex = (index - 1 + tabs.length) % tabs.length;
+        else if (event.key === 'Home') nextIndex = 0;
+        else if (event.key === 'End') nextIndex = tabs.length - 1;
+        else return;
+        event.preventDefault();
+        showCategory(panels[nextIndex].dataset.workCategory, true);
+      });
+    });
+    work.classList.add('is-enhanced');
+    compact.addEventListener('change', updateLayout);
+    updateLayout();
+
+    // Keep previously shared homepage section links useful after consolidation.
+    function followWorkHash() {
+      const category = { '#university': 'university', '#talks': 'talks' }[window.location.hash];
+      if (!category) return;
+      showCategory(category);
+      work.scrollIntoView({behavior: 'instant', block: 'start'});
+    }
+    window.addEventListener('hashchange', followWorkHash);
+    followWorkHash();
+  }
 
   document.querySelectorAll('.back-to-top').forEach(button => {
     button.addEventListener('click', function () {

@@ -1,0 +1,12 @@
+<div class="talk-meta">
+  {% if include.talk.format %}<span class="talk-format">{{ include.talk.format | escape }}</span>{% endif %}
+  {% if include.talk.event %}<span>{{ include.talk.event | escape }}</span>{% endif %}
+  {% if include.talk.event_date %}
+  {% assign event_date = include.talk.event_date | append: '' %}
+  {% if event_date.size == 4 %}
+  <span>{{ include.talk.date_label | default: event_date | escape }}</span>
+  {% else %}
+  <time datetime="{{ event_date | escape }}">{% if include.talk.date_label %}{{ include.talk.date_label | escape }}{% elsif event_date.size == 7 %}{{ event_date | append: '-01' | date: '%B %Y' }}{% else %}{{ event_date | date: '%-d %B %Y' }}{% endif %}</time>
+  {% endif %}
+  {% endif %}
+</div>

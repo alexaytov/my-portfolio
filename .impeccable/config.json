@@ -1,0 +1,17 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "flat-type-hierarchy",
+        "value": "*",
+        "files": [
+          "_layouts/talks.html"
+        ],
+        "createdAt": "2026-11-04T11:43:25.126Z",
+        "reason": "Agent verified computed styles in the rendered Jekyll page: desktop h1 48px, card h2 24px, body 15-16px; mobile h1 32px, card h2 24px, body 15-16px. Static template scan reports all roles as 16px because shared external styles are not resolved. Existing hierarchy is intentional and exceeds the 1.25 ratio."
+      }
+    ]
+  }
+}

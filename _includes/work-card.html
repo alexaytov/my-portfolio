@@ -1,0 +1,21 @@
+{% assign work_item = include.item %}
+{% capture work_href %}{% if work_item.url %}{{ work_item.url | relative_url }}{% elsif work_item.slug %}{{ '/projects/' | append: work_item.slug | append: '/' | relative_url }}{% elsif work_item.link contains '://' %}{{ work_item.link }}{% elsif work_item.link and work_item.link != '' %}{{ work_item.link | relative_url }}{% else %}{{ '/projects/' | relative_url }}{% endif %}{% endcapture %}
+<a class="work-card" href="{{ work_href | strip | escape }}" draggable="false">
+  {% if work_item.image and work_item.image != '' %}
+  {% assign work_image_prefix = site.baseurl | append: '/' %}
+  {% assign work_image_start = work_item.image | slice: 0, work_image_prefix.size %}
+  <div class="work-card-image">
+    <img src="{% if work_item.image contains '://' or work_image_start == work_image_prefix %}{{ work_item.image | escape }}{% else %}{{ work_item.image | relative_url | escape }}{% endif %}" alt="" loading="lazy" decoding="async" width="640" height="360" draggable="false">
+  </div>
+  {% endif %}
+  <div class="work-card-body">
+    <h4 class="work-card-title">{{ work_item.title | default: work_item.name | escape }}</h4>
+    <p class="work-card-description">{{ work_item.excerpt | default: work_item.description | strip_html | truncate: 150 | escape }}</p>
+    {% if include.kind == 'talks' %}
+    <div class="work-card-meta">{% if work_item.format %}<span>{{ work_item.format | escape }}</span>{% endif %}{% if work_item.event_date %}<span>{{ work_item.event_date | append: '' | slice: 0, 4 }}</span>{% endif %}</div>
+    {% elsif work_item.tech_stack.size > 0 %}
+    <div class="work-card-meta">{% for tech in work_item.tech_stack limit: 3 %}<span>{{ tech | escape }}</span>{% endfor %}</div>
+    {% endif %}
+    <span class="work-card-action">{% if include.kind == 'talks' %}View talk{% else %}View details{% endif %}<i class="fas fa-arrow-right" aria-hidden="true"></i></span>
+  </div>
+</a>

@@ -251,6 +251,10 @@
                 updateResults();
                 searchInput.focus();
             });
+            const requestedCategory = new URLSearchParams(window.location.search).get('category');
+            if (Array.from(categoryFilter.options).some(option => option.value === requestedCategory)) {
+                categoryFilter.value = requestedCategory;
+            }
             updateResults();
         });
     </script>

@@ -1,0 +1,45 @@
+---
+layout: compress
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>{% include head.html %}</head>
+<body>
+  {% include navbar.html %}
+  <main id="main-content" class="talk-page">
+    <article>
+      <header class="talk-heading">
+        <div class="container">
+          <a href="{{ '/talks/' | relative_url }}" class="talk-back-link"><i class="fas fa-arrow-left" aria-hidden="true"></i><span>All talks</span></a>
+          <h1 class="title is-1">{{ page.title | escape }}</h1>
+          {% include talk-meta.html talk=page %}
+          {% if page.excerpt %}<p class="talk-lede">{{ page.excerpt | escape }}</p>{% endif %}
+          {% capture talk_resources %}
+            {% for resource in page.resources %}
+            {% if resource.url and resource.url != '' and resource.label and resource.label != '' %}
+            <a class="talk-resource" href="{% if resource.url contains '://' %}{{ resource.url | escape }}{% else %}{{ resource.url | relative_url | escape }}{% endif %}">{{ resource.label | escape }}<i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+            {% endif %}
+            {% endfor %}
+          {% endcapture %}
+          {% assign talk_resources = talk_resources | strip %}
+          {% if talk_resources != '' %}<nav class="talk-resources" aria-label="Talk materials and links">{{ talk_resources }}</nav>{% endif %}
+        </div>
+      </header>
+      <div class="container talk-body">
+        {% if page.image and page.image != '' %}
+        <figure class="talk-cover">
+          <img src="{% if page.image contains '://' %}{{ page.image | escape }}{% else %}{{ page.image | relative_url | escape }}{% endif %}"
+               alt="{{ page.image_alt | default: page.title | escape }}" width="1200" height="675" decoding="async">
+          {% if page.image_caption %}<figcaption>{{ page.image_caption | escape }}</figcaption>{% endif %}
+        </figure>
+        {% endif %}
+        <div class="content talk-content">{{ content }}</div>
+        <div class="talk-closing">
+          <a href="{{ '/talks/' | relative_url }}" class="talk-back-link"><i class="fas fa-arrow-left" aria-hidden="true"></i><span>Explore all talks</span></a>
+        </div>
+      </div>
+    </article>
+  </main>
+  {% include footer.html %}
+</body>
+</html>

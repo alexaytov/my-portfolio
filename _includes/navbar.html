@@ -11,6 +11,7 @@
       <div class="navbar-end">
         <a class="navbar-item{% if page.layout == 'projects-grid' or page.layout == 'project-detail' %} is-active{% endif %}" href="{{ '/projects/' | relative_url }}"{% if page.layout == 'projects-grid' or page.layout == 'project-detail' %} aria-current="page"{% endif %}>Projects</a>
         <a class="navbar-item{% if page.layout == 'posts' or page.layout == 'blog' or page.layout == 'post' %} is-active{% endif %}" href="{{ '/posts/' | relative_url }}"{% if page.layout == 'posts' or page.layout == 'blog' or page.layout == 'post' %} aria-current="page"{% endif %}>Posts</a>
+        <a class="navbar-item{% if page.layout == 'talks' or page.layout == 'talk' %} is-active{% endif %}" href="{{ '/talks/' | relative_url }}"{% if page.layout == 'talks' or page.layout == 'talk' %} aria-current="page"{% endif %}>Talks</a>
       </div>
     </div>
   </div>

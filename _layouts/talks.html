@@ -1,0 +1,32 @@
+---
+layout: compress
+---
+<!DOCTYPE html>
+<html lang="en">
+<head>{% include head.html %}</head>
+<body>
+  {% include navbar.html %}
+  <main id="main-content" class="listing-page talks-page">
+    <header class="hero-body">
+      <div class="container">
+        <h1 class="title is-1">{{ page.title | escape }}</h1>
+        <p class="projects-intro">{{ page.description | escape }}</p>
+      </div>
+    </header>
+    <div class="container talks-list">
+      {% assign empty_talks = '' | split: ',' %}
+      {% assign all_talks = site.talks | default: empty_talks | sort: 'event_date' | reverse %}
+      {% for talk in all_talks %}
+      {% include talk-card.html talk=talk %}
+      {% else %}
+      <div class="empty-state">
+        <h2 class="title is-4">Talks are on the way</h2>
+        <p>In the meantime, explore my projects and posts.</p>
+        <a href="{{ '/projects/' | relative_url }}" class="button btn-gradient is-rounded">Explore projects</a>
+      </div>
+      {% endfor %}
+    </div>
+  </main>
+  {% include footer.html %}
+</body>
+</html>

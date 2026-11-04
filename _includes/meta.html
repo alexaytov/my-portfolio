@@ -1,4 +1,11 @@
 <!-- Include Meta Tags Here -->
+{% assign is_talk_page = false %}
+{% if page.layout == 'talk' or page.layout == 'talks' %}{% assign is_talk_page = true %}{% endif %}
+{% if is_talk_page %}
+{% assign talk_description = page.description | default: page.excerpt %}
+{% assign talk_image = page.image | default: site.author-image %}
+{% unless talk_image contains '://' %}{% assign talk_image = talk_image | absolute_url %}{% endunless %}
+{% endif %}
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
 <meta http-equiv="X-UA-Compatible" content="ie=edge">
@@ -7,14 +14,14 @@
 <title>{{site.title}}{% if page.title %} | {{page.title}}{% endif %}</title>
 
 <!-- Search Engine -->
-<meta name="description" content="{% unless page.layout == 'post' %}{{site.description}}{% else %}{{page.description}}{% endunless %}">
+<meta name="description" content="{% if is_talk_page %}{{ talk_description | escape }}{% elsif page.layout == 'post' %}{{page.description}}{% else %}{{site.description}}{% endif %}">
 <meta name="author" content="{{site.author-name}}"/>
 
 <!-- Open Graph / Facebook -->
-<meta property="og:type" content="{% if page.layout == 'post' %}article{% else %}website{% endif %}">
+<meta property="og:type" content="{% if page.layout == 'post' or page.layout == 'talk' %}article{% else %}website{% endif %}">
 <meta property="og:title" content="{{site.title}}{% if page.title %} | {{page.title}}{% endif %}">
-<meta property="og:description" content="{% unless page.layout == 'post' %}{{site.description}}{% else %}{{page.description}}{% endunless %}">
-<meta property="og:image" content="{% unless page.layout == 'post' %}{{site.site-image}}{% else %}{{page.post-image}}{% endunless %}">
+<meta property="og:description" content="{% if is_talk_page %}{{ talk_description | escape }}{% elsif page.layout == 'post' %}{{page.description}}{% else %}{{site.description}}{% endif %}">
+<meta property="og:image" content="{% if is_talk_page %}{{ talk_image | escape }}{% elsif page.layout == 'post' %}{{page.post-image}}{% else %}{{site.site-image}}{% endif %}">
 <meta property="og:image:alt" content="{{site.title}}{% if page.title %} | {{page.title}}{% endif %}">
 <meta property="og:url" content="{{site.url}}{{site.baseurl}}{{page.url}}">
 <meta property="og:site_name" content="{{site.title}}">
@@ -25,8 +32,8 @@
 <!-- Twitter -->
 <meta name="twitter:card" content="summary_large_image"/>
 <meta name="twitter:title" content="{{site.title}}{% if page.title %} | {{page.title}}{% endif %}">
-<meta name="twitter:description" content="{% unless page.layout == 'post' %}{{site.description}}{% else %}{{page.description}}{% endunless %}">
-<meta name="twitter:image" content="{% unless page.layout == 'post' %}{{site.site-image}}{% else %}{{page.post-image}}{% endunless %}">
+<meta name="twitter:description" content="{% if is_talk_page %}{{ talk_description | escape }}{% elsif page.layout == 'post' %}{{page.description}}{% else %}{{site.description}}{% endif %}">
+<meta name="twitter:image" content="{% if is_talk_page %}{{ talk_image | escape }}{% elsif page.layout == 'post' %}{{page.post-image}}{% else %}{{site.site-image}}{% endif %}">
 {% if site.twitter_username != "" %}
 <meta name="twitter:site" content="@{{site.twitter_username}}">
 <meta name="twitter:creator" content="@{{site.twitter_username}}">
@@ -34,8 +41,8 @@
 
 <!-- Schema.org for Google -->
 <meta itemprop="name" content="{{site.title}}{% if page.title %} | {{page.title}}{% endif %}">
-<meta itemprop="description" content="{% unless page.layout == 'post' %}{{site.description}}{% else %}{{page.description}}{% endunless %}">
-<meta itemprop="image" content="{% unless page.layout == 'post' %}{{site.site-image}}{% else %}{{page.post-image}}{% endunless %}">
+<meta itemprop="description" content="{% if is_talk_page %}{{ talk_description | escape }}{% elsif page.layout == 'post' %}{{page.description}}{% else %}{{site.description}}{% endif %}">
+<meta itemprop="image" content="{% if is_talk_page %}{{ talk_image | escape }}{% elsif page.layout == 'post' %}{{page.post-image}}{% else %}{{site.site-image}}{% endif %}">
 
 <!-- Global site tag (gtag.js) - Google Analytics -->
 {% if site.google-analytics != "" and site.google-analytics %}

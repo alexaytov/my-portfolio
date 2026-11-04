@@ -1,0 +1,25 @@
+<section class="work-panel" id="work-{{ include.key }}" aria-labelledby="work-heading-{{ include.key }}" data-work-category="{{ include.key }}">
+  <h3 class="work-category-title" id="work-heading-{{ include.key }}">{{ include.title }}</h3>
+  {% if include.items.size > 0 %}
+  <div class="work-carousel" role="region" aria-roledescription="carousel" aria-label="{{ include.title }}">
+    <div class="work-viewport" id="work-slides-{{ include.key }}" tabindex="0" aria-label="Browse {{ include.title | downcase }}">
+      {% for item in include.items %}
+      <div class="work-slide" role="group" aria-roledescription="slide" aria-label="{{ forloop.index }} of {{ include.items.size }}">
+        {% include work-card.html item=item kind=include.key %}
+      </div>
+      {% endfor %}
+    </div>
+    <div class="work-controls" role="group" aria-label="Choose {{ include.title | downcase }} item" hidden>
+      {% for item in include.items %}
+      <button class="work-pill" type="button" aria-label="Show {{ include.title | downcase }} item {{ forloop.index }} of {{ include.items.size }}: {{ item.title | default: item.name | escape }}" aria-controls="work-slides-{{ include.key }}"{% if forloop.first %} aria-current="true"{% endif %}>
+        <span class="work-pill-track" aria-hidden="true"><span class="work-pill-fill"></span></span>
+      </button>
+      {% endfor %}
+    </div>
+    <span class="work-status" role="status" aria-live="polite" aria-atomic="true"></span>
+  </div>
+  {% else %}
+  <div class="work-empty"><p>More {{ include.title | downcase }} to share soon.</p></div>
+  {% endif %}
+  <a class="work-archive-link" href="{{ include.archive | relative_url }}"><span>{{ include.archive_label }}</span><i class="fas fa-arrow-right" aria-hidden="true"></i></a>
+</section>

@@ -70,6 +70,10 @@ collections:
   projects:
     output: true
     permalink: /projects/:slug/
+  talks:
+    output: true
+    permalink: /talks/:name/
+    sort_by: event_date
 
 # Defaults
 defaults:
@@ -92,9 +96,17 @@ defaults:
       type: 'projects'
     values:
       layout: project-detail
+  -
+    scope:
+      path: ''
+      type: 'talks'
+    values:
+      layout: talk
 
 # Exclude
 exclude:
+  - .impeccable/
+  - README.md
   - .sass-cache/
   - .jekyll-cache/
   - gemfiles/
