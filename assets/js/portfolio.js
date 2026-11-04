@@ -135,27 +135,4 @@ document.addEventListener('DOMContentLoaded', function () {
       if (brand) brand.focus({preventScroll: true});
     });
   });
-
-  // Match the active navigation link to the section below the fixed header.
-  const home = document.getElementById('hero');
-  if (home) {
-    const links = Array.from(document.querySelectorAll('.navbar-end a'));
-    const sections = ['hero', 'about', 'work', 'university'].map(id => document.getElementById(id)).filter(Boolean);
-    let scheduled = false;
-    function updateNavigation() {
-      const offset = window.scrollY + 160;
-      const current = sections.filter(section => section.offsetTop <= offset).pop() || home;
-      links.forEach(link => {
-        const active = new URL(link.href).hash === '#' + current.id;
-        link.classList.toggle('is-active', active);
-        if (active) link.setAttribute('aria-current', 'location');
-        else link.removeAttribute('aria-current');
-      });
-      scheduled = false;
-    }
-    window.addEventListener('scroll', function () {
-      if (!scheduled) { scheduled = true; requestAnimationFrame(updateNavigation); }
-    }, {passive: true});
-    updateNavigation();
-  }
 });
