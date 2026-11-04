@@ -3,7 +3,7 @@ layout: compress
 ---
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
   {% include head.html %}
@@ -12,6 +12,7 @@ layout: compress
 <body>
   {% include navbar.html %}
 
+  <main id="main-content">
   <!-- Project Hero Section -->
   <section class="hero is-medium has-text-centered" id="project-hero">
     <div class="hero-body">
@@ -96,7 +97,7 @@ layout: compress
           <div class="project-meta-grid">
             {% if page.tech_stack %}
             <div class="project-meta-item">
-              <h3 class="project-meta-title">Tech Stack</h3>
+              <h2 class="project-meta-title">Tech Stack</h2>
               <div class="tags are-medium">
                 {% for tech in page.tech_stack %}
                 <span class="tag tech-tag">{{tech}}</span>
@@ -107,7 +108,7 @@ layout: compress
 
             {% if page.tags %}
             <div class="project-meta-item">
-              <h3 class="project-meta-title">Tags</h3>
+              <h2 class="project-meta-title">Tags</h2>
               <div class="tags are-medium">
                 {% for tag in page.tags %}
                 <span class="tag category-tag">{{tag}}</span>
@@ -139,6 +140,7 @@ layout: compress
     </div>
   </section>
 
+  </main>
   <!-- Footer -->
   {% include footer.html %}
 </body>

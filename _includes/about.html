@@ -1,33 +1,16 @@
-<section class="hero is-fullheight has-text-centered has-background-white-ter" id="about">
-    <div class="hero-body">
-        <div class="container">
-            <div class="columns">
-                <div class="column is-one-fifth-desktop is-one-fifth-tablet is-one-fifth-fullhd">
-                    <figure class="image">
-                        <img class="is-rounded" src="{{site.author-image}}" alt="{{site.author-name}}" loading="lazy">
-                    </figure>
-                </div>
-                <div
-                    class="column has-text-left-desktop has-text-left-tablet has-text-left-fullhd has-text-left-widescreen">
-                    <p>
-                        My name is Aleksandar Aytov and I am a full-stack web developer with a deep passion for creating innovative and functional software solutions.
-                    </p>
-                    <br>
-                    <p>
-                        With a solid foundation in Java, Spring, Kubernetes, and Angular, I am proficient in all aspects of web development, from back-end architecture to front-end design.
-                    </p>
-                    <br>
-                    <p>
-                        Throughout my career, I have consistently sought opportunities to expand my knowledge and skills. I have completed a Master's degree in Information Technology in Business Management while simultaneously working as a Senior Web Developer at SAP.
-                    </p>
-                    <br>
-                    <p>
-                        I am driven by a desire to make a positive impact through my work. I enjoy collaborating with teams to bring complex projects to life and helping people achieve their goals through technology.
-                    </p>
-                    <br>
-                    <div class="container columns is-centered">
-                    </div>
-                </div>
-            </div>
-        </div>
+<section class="hero has-background-white-ter" id="about" aria-labelledby="about-title">
+  <div class="hero-body">
+    <div class="container about-layout">
+      <figure class="image about-portrait">
+        <img class="is-rounded" src="{{site.author-image | relative_url}}" alt="{{site.author-name}}" loading="lazy" width="400" height="500">
+      </figure>
+      <div class="about-copy">
+        <h2 class="title is-2" id="about-title">About Me</h2>
+        <p>My name is Aleksandar Aytov and I am a full-stack web developer with a deep passion for creating innovative and functional software solutions.</p>
+        <p>With a solid foundation in Java, Spring, Kubernetes, and Angular, I am proficient in all aspects of web development, from back-end architecture to front-end design.</p>
+        <p>Throughout my career, I have consistently sought opportunities to expand my knowledge and skills. I have completed a Master's degree in Information Technology in Business Management while simultaneously working as a Senior Web Developer at SAP.</p>
+        <p>I am driven by a desire to make a positive impact through my work. I enjoy collaborating with teams to bring complex projects to life and helping people achieve their goals through technology.</p>
+      </div>
+    </div>
+  </div>
 </section>

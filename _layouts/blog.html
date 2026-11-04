@@ -3,39 +3,67 @@ layout: compress
 ---
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
-{% include head.html %}
+<head>
+    {% include head.html %}
+</head>
 
 <body>
     {% include navbar.html %}
 
-    <section class="hero is-fullheight" id="blog">
+    <main id="main-content">
+    <section class="hero is-fullheight listing-page" id="blog">
         <div class="hero-body">
             <div class="container">
+                <h1 class="title is-1">{{page.title | default: "Posts"}}</h1>
                 {% include blogpage-heading.html %}
             </div>
         </div>
-        <div id="results-container"></div>
+        <div id="results-container" class="container" role="status" aria-live="polite"></div>
+        <div class="container blog-cards" id="all-blog-cards">
         <!--Blog Cards Section-->
         {% for post in site.posts %}
             {% include blog-card.html %}
         {% endfor %}
         </div>
     </section>
-    <br>
+    </main>
     <!--Footer begins here-->
     {% include footer.html %}
-    <script src="{{site.url}}{{site.baseurl}}/assets/js/simple-jekyll-search.js"></script>
-
+    <script src="{{ '/assets/js/simple-jekyll-search.js' | relative_url }}"></script>
     <script>
+        const searchInput = document.getElementById('search-input');
+        const allCards = document.getElementById('all-blog-cards');
         SimpleJekyllSearch({
-            searchInput: document.getElementById('search'),
+            searchInput: searchInput,
             resultsContainer: document.getElementById('results-container'),
-            json: '{{site.url}}{{site.baseurl}}/search.json',
-            searchResultTemplate: '<div style="border: 0.15rem dashed black" class="searchResult columns has-text-centered" id="blog-card"><div class="column is-marginless is-paddingless is-one-third-desktop is-one-third-fullhd is-one-third-tablet"><div class="image is-16by9" style="background-image: url({image});"></div></div><a href="{url}"><div class="column has-text-left-desktop has-text-left-tablet"><h1 class="title is-size-4-touch">{title}</h1><div class="content has-text-grey">{content}<hr class="has-background-grey"><span class="has-text-grey">Published on <span class="has-text-weight-semibold">{date}</span></span> | <i class="fas fa-clock"></i> <span class="has-text-weight-semibold">{readtime} min</span> read</div></div></a></div>',
-            noResultsText: '<div class="subtitle has-text-centered is-uppercase">No Results Found</div><hr class="has-background-black" style="margin: 0.5rem 5rem 2.5rem 5rem">',
-            fuzzy: true,
+            json: '{{ "/search.json" | relative_url }}',
+            searchResultTemplate: '<article class="listing-card blog-card searchResult"><div class="listing-card-media"><figure class="image is-16by9"><img src="{image}" alt="" loading="lazy" width="800" height="450" style="object-fit:contain;"></figure></div><a href="{url}" class="listing-card-body"><h2 class="title">{title}</h2><div class="content has-text-grey">{content}<hr class="has-background-grey">Published on <span class="has-text-weight-semibold">{date}</span> | <span class="has-text-weight-semibold">{readtime} min</span> read</div></a></article>',
+            templateMiddleware: function(key, value) {
+                if (key === 'image' && value && !/^(https?:)?\//.test(value)) {
+                    return '{{site.baseurl}}/' + value;
+                }
+                if (key === 'readtime') return Math.max(1, Number(value));
+            },
+            noResultsText: '<p class="has-text-centered">No posts found. Try a different search.</p>',
+            fuzzy: true
+        });
+        function updateSearch() {
+            allCards.hidden = searchInput.value.trim().length > 0;
+            if (!allCards.hidden) {
+                document.getElementById('results-container').textContent = '';
+                return;
+            }
+            searchInput.dispatchEvent(new KeyboardEvent('keyup', {bubbles: true}));
+        }
+        searchInput.addEventListener('input', updateSearch);
+        document.getElementById('search-btn').addEventListener('click', updateSearch);
+        searchInput.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault();
+                updateSearch();
+            }
         });
     </script>
 </body>

@@ -1,53 +1,21 @@
-<nav class="navbar is-black is-fixed-top" role="navigation" aria-label="main navigation" id="navbar">
-    <div class="container">
-
-        <!-- logo or branding image on left side -->
-        <div class="navbar-brand">
-            <a class="navbar-item"
-                href="{% if page.layout == 'default' %}{{site.url}}{{site.baseurl}}/#{% else %}{{site.url}}{{site.baseurl}}/{% endif %}">
-                <strong>{{site.title}}</strong>
-            </a>
-            <div class="navbar-burger" data-target="navbar-menu">
-                <span></span>
-                <span></span>
-                <span></span>
-            </div>
-        </div>
-
-        <!-- children of navbar-menu must be navbar-start and/or navbar-end -->
-        <div class="navbar-menu has-background-black" id="navbar-menu">
-            <!-- navbar items | right side -->
-            <div class="navbar-end">
-                <a class="navbar-item {% if page.layout == 'default' %}is-active{% endif %}"
-                    href="{% if page.layout == 'default' %}{{site.url}}{{site.baseurl}}/#{% else %}{{site.url}}{{site.baseurl}}/{% endif %}">HOME</a>
-                <a class="navbar-item" href="{{site.url}}{{site.baseurl}}/#about">ABOUT</a>
-                <a class="navbar-item" href="{{site.url}}{{site.baseurl}}/#work">MY WORK</a>
-                <a class="navbar-item {% if page.layout == 'projects-grid' or page.layout == 'project-detail' %}is-active{% endif %}" href="{{site.url}}{{site.baseurl}}/projects/">PROJECTS</a>
-                <a class="navbar-item" href="{{site.url}}{{site.baseurl}}/#university">UNIVERSITY</a>
-                <a class="navbar-item {% if page.layout == 'posts' %}is-active{% endif %}" class="navbar-item" href="{{site.url}}{{site.baseurl}}/posts">POSTS</a>
-            </div>
-
-        </div>
+<a class="skip-link" href="#main-content">Skip to content</a>
+<nav class="navbar is-black is-fixed-top" aria-label="Main navigation" id="navbar">
+  <div class="container">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="{{ '/' | relative_url }}"><strong>{{site.title}}</strong></a>
+      <button class="navbar-burger" type="button" aria-label="Open navigation" aria-controls="navbar-menu" aria-expanded="false">
+        <span aria-hidden="true"></span><span aria-hidden="true"></span><span aria-hidden="true"></span>
+      </button>
     </div>
+    <div class="navbar-menu has-background-black" id="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item {% if page.layout == 'default' %}is-active{% endif %}" href="{{ '/' | relative_url }}#hero">Home</a>
+        <a class="navbar-item" href="{{ '/' | relative_url }}#about">About</a>
+        <a class="navbar-item" href="{{ '/' | relative_url }}#work">My Work</a>
+        <a class="navbar-item {% if page.layout == 'projects-grid' or page.layout == 'project-detail' %}is-active{% endif %}" href="{{ '/projects/' | relative_url }}">Projects</a>
+        <a class="navbar-item" href="{{ '/' | relative_url }}#university">University</a>
+        <a class="navbar-item {% if page.layout == 'posts' or page.layout == 'blog' or page.layout == 'post' %}is-active{% endif %}" href="{{ '/posts' | relative_url }}">Posts</a>
+      </div>
+    </div>
+  </div>
 </nav>
-<!-- Bulma Navbar JS -->
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-        /* Get all "navbar-burger" elements */
-        var $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
-        /* Check if there are any navbar burgers */
-        if ($navbarBurgers.length > 0) {
-            /* Add a click event on each of them */
-            $navbarBurgers.forEach(function ($el) {
-                $el.addEventListener('click', function () {
-                    /* Get the target from the "data-target" attribute */
-                    var target = $el.dataset.target;
-                    var $target = document.getElementById(target);
-                    /* Toggle the class on both the "navbar-burger" and the "navbar-menu" */
-                    $el.classList.toggle('is-active');
-                    $target.classList.toggle('is-active');
-                });
-            });
-        }
-    });
-</script>

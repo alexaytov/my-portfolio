@@ -1,15 +1,6 @@
 <footer id="footer">
-    <!--Footer Button-->
-    <div class="has-text-centered" id="backtotop">
-        <a onclick="window.scroll({top: 0, behavior: 'smooth'})" class="button btn-gradient is-medium is-rounded">
-            <span>Back to Top</span>
-            <span class="icon">
-                <i class="fas fa-chevron-up"></i>
-            </span>
-        </a>
-    </div>
-    <!--Footer Main Section-->
-    <div class="has-background-black has-text-centered has-text-white" id="credits">
-        <i class="far fa-copyright"></i> {{ "now" | date: "%Y" }} Aleksandar Aytov
-    </div>
+  <div class="container footer-inner">
+    <p>© {{ "now" | date: "%Y" }} {{site.author-name}}</p>
+    <button type="button" class="back-to-top">Back to Top <span class="icon"><i class="fas fa-arrow-up" aria-hidden="true"></i></span></button>
+  </div>
 </footer>
