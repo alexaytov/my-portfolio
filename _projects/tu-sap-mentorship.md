@@ -9,7 +9,9 @@ date: 2026-02-23
 project_url: ""
 github_url: ""
 demo_url: ""
-image: https://images.unsplash.com/photo-1524178232363-1fb2b075b655?w=800&q=80
+image: /my-portfolio/assets/images/talks/ai-ambassador.jpg
+image_type: photo
+image_alt: "Aleksandar Aytov presenting AI Ambassador at SAP during the Technical University and SAP mentorship lectures."
 company: SAP / Technical University of Sofia
 ---
 
@@ -24,10 +26,20 @@ An introductory session covering artificial intelligence concepts and hands-on e
 
 [Download Lecture Materials (PDF)]({{ site.baseurl }}/assets/uni/AI - Lectures & Exercises.pdf)
 
+<figure class="project-photo">
+  <img src="{{ '/assets/images/talks/ai-lectures.jpg' | relative_url }}" alt="Aleksandar Aytov speaking beside a screen displaying AI Solutions." width="800" height="450" loading="lazy" decoding="async">
+  <figcaption>Introducing practical AI applications during AI – Lectures &amp; Exercises.</figcaption>
+</figure>
+
 ### AI Ambassador @ SAP
 A comprehensive presentation about AI initiatives at SAP, demonstrating real-world enterprise AI applications and career opportunities in the field.
 
 [Download Presentation (PDF)]({{ site.baseurl }}/assets/uni/AI Ambassador @ SAP.pdf)
+
+<figure class="project-photo">
+  <img src="{{ '/assets/images/talks/ai-lectures-audience.jpg' | relative_url }}" alt="Aleksandar Aytov presenting practical AI examples to a seated audience." width="800" height="600" loading="lazy" decoding="async">
+  <figcaption>Sharing practical AI examples with students during the mentorship lectures.</figcaption>
+</figure>
 
 ## Program Goals
 
