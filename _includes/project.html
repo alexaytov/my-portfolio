@@ -1,6 +1,6 @@
 {% assign empty_work = '' | split: ',' %}
-{% assign work_projects = site.projects | default: empty_work | where_exp: 'item', "item.category != 'university'" | sort: 'date' | reverse | slice: 0, 5 %}
-{% if work_projects.size == 0 %}{% assign work_projects = site.data.projects | default: empty_work | slice: 0, 5 %}{% endif %}
+{% assign work_projects = site.projects | default: empty_work | where_exp: 'item', "item.category != 'university'" | sort: 'date' | reverse %}
+{% if work_projects.size == 0 %}{% assign work_projects = site.data.projects | default: empty_work %}{% endif %}
 {% assign university_work = site.projects | default: empty_work | where: 'category', 'university' | sort: 'date' | reverse %}
 {% if university_work.size == 0 %}{% assign university_work = site.data.university-projects | default: empty_work %}{% endif %}
 {% assign work_talks = site.talks | default: empty_work | where: 'featured', true | sort: 'event_date' | reverse %}

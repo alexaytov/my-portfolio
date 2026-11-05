@@ -9,12 +9,16 @@
       </div>
       {% endfor %}
     </div>
-    <div class="work-controls" role="group" aria-label="Choose {{ include.title | downcase }} item" hidden>
-      {% for item in include.items %}
-      <button class="work-pill" type="button" aria-label="Show {{ include.title | downcase }} item {{ forloop.index }} of {{ include.items.size }}: {{ item.title | default: item.name | escape }}" aria-controls="work-slides-{{ include.key }}"{% if forloop.first %} aria-current="true"{% endif %}>
-        <span class="work-pill-track" aria-hidden="true"><span class="work-pill-fill"></span></span>
+    <div class="work-controls" role="group" aria-label="Browse {{ include.title | downcase }}" hidden>
+      <button class="work-dot-button" data-work-step="-1" type="button" aria-label="Previous {{ include.title | downcase }} item" aria-controls="work-slides-{{ include.key }}" title="Previous item">
+        <span class="work-dot" aria-hidden="true"></span>
       </button>
-      {% endfor %}
+      <span class="work-current" role="img" aria-label="Current item">
+        <span class="work-progress-track" aria-hidden="true"><span class="work-progress-fill"></span></span>
+      </span>
+      <button class="work-dot-button" data-work-step="1" type="button" aria-label="Next {{ include.title | downcase }} item" aria-controls="work-slides-{{ include.key }}" title="Next item">
+        <span class="work-dot" aria-hidden="true"></span>
+      </button>
     </div>
     <span class="work-status" role="status" aria-live="polite" aria-atomic="true"></span>
   </div>

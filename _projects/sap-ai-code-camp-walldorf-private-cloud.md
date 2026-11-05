@@ -9,7 +9,9 @@ date: 2026-10-27
 project_url: ""
 github_url: ""
 demo_url: ""
-image: /my-portfolio/assets/images/sap.png
+image: /my-portfolio/assets/images/projects/sap-ai-code-camp-walldorf.jpg
+image_type: photo
+image_alt: "SAP Private Cloud AI Code Camp event sign in Walldorf, 27–29 October 2026."
 company: SAP
 ---
 

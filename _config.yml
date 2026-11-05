@@ -9,7 +9,8 @@ baseurl: /my-portfolio
 # Title of the Site
 title: Aleksandar Aytov
 # Description of the Site
-description: Full-stack software developer
+description: "Senior Web Developer and AI Ambassador at SAP. PhD candidate at the Bulgarian Academy of Sciences, researching AI integration in real-world systems."
+hero-description: "Software Developer · AI Ambassador · PhD Candidate"
 # URL of Image of the Site
 site-image: /WhatATheme/assets/images/meta.jpg
 # Keywords of the Site

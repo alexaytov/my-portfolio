@@ -67,8 +67,8 @@ layout: compress
   {% if page.image %}
   <section class="section" style="padding-top: 1.5rem; padding-bottom: 1.5rem;">
     <div class="container">
-      <figure class="image project-hero-image">
-        <img src="{{page.image}}" alt="{{page.title}}" loading="lazy">
+      <figure class="image project-hero-image{% if page.image_type == 'photo' %} project-hero-photo{% endif %}">
+        <img src="{{page.image}}" alt="{{ page.image_alt | default: page.title | escape }}" loading="lazy" decoding="async">
       </figure>
     </div>
   </section>

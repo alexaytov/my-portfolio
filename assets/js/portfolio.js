@@ -54,8 +54,9 @@ document.addEventListener('DOMContentLoaded', function () {
       if (!viewport) return;
       const slides = Array.from(viewport.querySelectorAll('.work-slide'));
       const controls = panel.querySelector('.work-controls');
-      const pills = Array.from(controls.querySelectorAll('.work-pill'));
-      const fills = pills.map(pill => pill.querySelector('.work-pill-fill'));
+      const dotButtons = Array.from(controls.querySelectorAll('[data-work-step]'));
+      const currentDot = controls.querySelector('.work-current');
+      const progressFill = controls.querySelector('.work-progress-fill');
       const status = panel.querySelector('.work-status');
       const slideDuration = 7000;
       let current = 0;
@@ -84,11 +85,9 @@ document.addEventListener('DOMContentLoaded', function () {
       function resetProgress() {
         if (progress) progress.cancel();
         progress = null;
-        fills.forEach((fill, index) => {
-          fill.style.transform = `scaleX(${index < current || (reduceMotion.matches && index === current) ? 1 : 0})`;
-        });
+        progressFill.style.transform = `scaleX(${reduceMotion.matches ? 1 : 0})`;
         if (slides.length < 2 || reduceMotion.matches) return;
-        progress = fills[current].animate([
+        progress = progressFill.animate([
           {transform: 'scaleX(0)'}, {transform: 'scaleX(1)'}
         ], {duration: slideDuration, easing: 'linear', fill: 'forwards'});
         progress.pause();
@@ -98,9 +97,11 @@ document.addEventListener('DOMContentLoaded', function () {
         syncPlayback();
       }
       function update() {
-        pills.forEach((pill, index) => {
-          if (index === current) pill.setAttribute('aria-current', 'true');
-          else pill.removeAttribute('aria-current');
+        currentDot.setAttribute('aria-label', `Current ${panel.dataset.workCategory} item: ${current + 1} of ${slides.length}, ${slides[current].querySelector('.work-card-title').textContent}`);
+        dotButtons.forEach(button => {
+          const direction = Number(button.dataset.workStep);
+          const destination = (current + direction + slides.length) % slides.length;
+          button.setAttribute('aria-label', `${direction < 0 ? 'Previous' : 'Next'} ${panel.dataset.workCategory} item: ${destination + 1} of ${slides.length}, ${slides[destination].querySelector('.work-card-title').textContent}`);
         });
         slides.forEach((slide, index) => { slide.inert = index !== current; });
       }
@@ -125,7 +126,17 @@ document.addEventListener('DOMContentLoaded', function () {
       carousels.set(panel, align);
       update();
       resetProgress();
-      pills.forEach((pill, index) => pill.addEventListener('click', () => goTo(index)));
+      function step(direction) {
+        const destination = (current + direction + slides.length) % slides.length;
+        goTo(destination, {instant: current + direction < 0 || current + direction >= slides.length});
+      }
+      dotButtons.forEach(button => button.addEventListener('click', () => step(Number(button.dataset.workStep))));
+      controls.addEventListener('keydown', event => {
+        if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
+        event.preventDefault();
+        if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') step(event.key === 'ArrowLeft' ? -1 : 1);
+        else goTo(event.key === 'Home' ? 0 : slides.length - 1, {instant: true});
+      });
       viewport.addEventListener('keydown', event => {
         const destinations = {ArrowLeft: current - 1, ArrowRight: current + 1, Home: 0, End: slides.length - 1};
         if (!(event.key in destinations)) return;

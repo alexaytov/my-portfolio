@@ -9,7 +9,9 @@ date: 2026-07-08
 project_url: ""
 github_url: ""
 demo_url: ""
-image: /my-portfolio/assets/images/sap.png
+image: /my-portfolio/assets/images/projects/sap-ai-code-camp-munich.jpg
+image_type: photo
+image_alt: "Aleksandar Aytov beside the AI Experts sign at the SCM AI Code Camp in Munich."
 company: SAP
 ---
 
@@ -35,3 +37,8 @@ The SCM focus connected AI experimentation with the context of supply chain soft
 For me, this was an opportunity to contribute my AI integration experience in a coaching role, working alongside teams with their own domain knowledge. It brought together two areas of my work: applying AI in real systems and helping other developers build their skills.
 
 I later participated as an AI Expert in the [SAP Private Cloud AI Code Camp in Walldorf]({{ '/projects/sap-ai-code-camp-walldorf-private-cloud/' | relative_url }}).
+
+<figure class="project-photo">
+  <img src="{{ '/assets/images/projects/sap-ai-code-camp-munich-badge.jpg' | relative_url }}" alt="Aleksandar Aytov's AI Code Camp badge from Munich." width="1600" height="913" loading="lazy" decoding="async">
+  <figcaption>My badge from the Munich AI Code Camp.</figcaption>
+</figure>
