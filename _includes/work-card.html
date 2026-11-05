@@ -1,4 +1,5 @@
 {% assign work_item = include.item %}
+{% if include.kind == 'talks' %}{% assign work_date = work_item.event_date | append: '' | strip %}{% else %}{% assign work_date = work_item.date | append: '' | strip %}{% endif %}
 {% capture work_href %}{% if work_item.url %}{{ work_item.url | relative_url }}{% elsif work_item.slug %}{{ '/projects/' | append: work_item.slug | append: '/' | relative_url }}{% elsif work_item.link contains '://' %}{{ work_item.link }}{% elsif work_item.link and work_item.link != '' %}{{ work_item.link | relative_url }}{% else %}{{ '/projects/' | relative_url }}{% endif %}{% endcapture %}
 <a class="work-card" href="{{ work_href | strip | escape }}" draggable="false">
   {% if work_item.image and work_item.image != '' %}
@@ -9,13 +10,33 @@
   </div>
   {% endif %}
   <div class="work-card-body">
-    <h4 class="work-card-title">{{ work_item.title | default: work_item.name | escape }}</h4>
+    <div class="work-card-heading">
+      <h4 class="work-card-title">{{ work_item.title | default: work_item.name | escape }}</h4>
+      {% if work_date != '' or include.kind == 'talks' and work_item.format %}
+      <div class="work-card-meta">
+        {% if work_date != '' %}
+          {% if work_date.size == 4 %}
+          <span class="work-card-date">{{ work_item.date_label | default: work_date | escape }}</span>
+          {% else %}
+            {% if work_date.size == 7 %}{% assign work_month = work_date | append: '-01' %}{% else %}{% assign work_month = work_date %}{% endif %}
+          <time class="work-card-date" datetime="{{ work_month | date: '%Y-%m' }}">{{ work_month | date: '%B %Y' }}</time>
+          {% endif %}
+        {% endif %}
+        {% if include.kind == 'talks' and work_item.format %}<span>{{ work_item.format | escape }}</span>{% endif %}
+      </div>
+      {% endif %}
+      {% if include.kind == 'talks' %}
+        {% if work_item.event or work_item.location %}
+      <p class="work-card-place">{% if work_item.event %}{{ work_item.event | escape }}{% endif %}{% if work_item.location and work_item.location != work_item.event %}{% if work_item.event %} · {% endif %}{{ work_item.location | escape }}{% endif %}</p>
+        {% endif %}
+      {% endif %}
+    </div>
     <p class="work-card-description">{{ work_item.excerpt | default: work_item.description | strip_html | truncate: 150 | escape }}</p>
-    {% if include.kind == 'talks' %}
-    <div class="work-card-meta">{% if work_item.format %}<span>{{ work_item.format | escape }}</span>{% endif %}{% if work_item.event_date %}<span>{{ work_item.event_date | append: '' | slice: 0, 4 }}</span>{% endif %}</div>
-    {% elsif work_item.tech_stack.size > 0 %}
+    {% unless include.kind == 'talks' %}
+      {% if work_item.tech_stack.size > 0 %}
     <div class="work-card-meta">{% for tech in work_item.tech_stack limit: 3 %}<span>{{ tech | escape }}</span>{% endfor %}</div>
-    {% endif %}
+      {% endif %}
+    {% endunless %}
     <span class="work-card-action">{% if include.kind == 'talks' %}View talk{% else %}View details{% endif %}<i class="fas fa-arrow-right" aria-hidden="true"></i></span>
   </div>
 </a>
