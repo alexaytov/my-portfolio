@@ -6,7 +6,8 @@ event_date: "2026"
 format: Presentation
 featured: true
 image: /assets/images/talks/ai-ambassador.jpg
-image_alt: "AI Solutions — opening slide from the AI Ambassador at SAP presentation."
+image_alt: "Aleksandar Aytov speaking beside the AI Ambassador at SAP introduction slide."
+image_caption: "Presenting AI initiatives and applications at SAP."
 resources:
   - label: Slides (PDF)
     url: /assets/uni/AI%20Ambassador%20%40%20SAP.pdf
