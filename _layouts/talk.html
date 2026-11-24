@@ -34,6 +34,33 @@ layout: compress
         </figure>
         {% endif %}
         <div class="content talk-content">{{ content }}</div>
+        {% if page.slides_pdf and page.slides_pdf != '' %}
+        {% assign slides_url = page.slides_pdf | relative_url %}
+        <section class="talk-slides" aria-labelledby="talk-slides-title">
+          <div class="talk-slides-heading">
+            <h2 id="talk-slides-title">Presentation slides</h2>
+            <a class="talk-resource" href="{{ slides_url | escape }}" target="_blank" rel="noopener noreferrer">Open PDF in a new tab <i class="fas fa-external-link-alt" aria-hidden="true"></i></a>
+          </div>
+          <p class="talk-slides-help" id="talk-slides-help">Use Previous and Next to browse, or use the left and right arrow keys while the viewer is focused.</p>
+          <div class="talk-slides-viewer" data-pdf-slides data-pdf-url="{{ slides_url | escape }}" tabindex="0" role="region" aria-label="Presentation viewer" aria-describedby="talk-slides-help">
+            <div class="talk-slides-stage" aria-busy="true">
+              <canvas hidden role="img" aria-label="Presentation slide"></canvas>
+              <p class="talk-slides-status" role="status">Loading presentation…</p>
+            </div>
+            <div class="talk-slides-controls" role="group" aria-label="Slide navigation">
+              <button type="button" class="talk-resource" data-slide-prev disabled aria-label="Previous slide">Previous</button>
+              <span class="talk-slides-counter" aria-live="polite" aria-atomic="true">Loading slides</span>
+              <button type="button" class="talk-resource" data-slide-next disabled aria-label="Next slide">Next</button>
+            </div>
+            <details class="talk-slides-text" hidden>
+              <summary>Slide text</summary>
+              <p></p>
+            </details>
+          </div>
+          <noscript><p>JavaScript is needed for the slide viewer. <a href="{{ slides_url | escape }}">Open the PDF to read the presentation.</a></p></noscript>
+          <script type="module" src="{{ '/assets/js/pdf-slides.js' | relative_url }}"></script>
+        </section>
+        {% endif %}
         <div class="talk-closing">
           <a href="{{ '/talks/' | relative_url }}" class="talk-back-link"><i class="fas fa-arrow-left" aria-hidden="true"></i><span>Explore all talks</span></a>
         </div>
